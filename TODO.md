@@ -137,3 +137,5 @@ useful links
   - https://n64brew.dev/wiki/MIPS_Assembly
 
 - https://static.miraheze.org/n64wiki/5/55/VR4300-Users-Manual.pdf
+- https://disasm.x32.dev/
+- http://www0.cs.ucl.ac.uk/staff/electran/gc03/pdf/07mips_examples.pdf
