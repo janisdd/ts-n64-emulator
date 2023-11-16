@@ -128,6 +128,25 @@ TODO Support of the MIPS ISA
 - SYNC is handled as a NOP
 
 
+cross compile with clang:
+- https://mipsym.github.io/mipsym/CrossCompile.html
+  - `brew install llvm`
+
+```bash
+/usr/local/Cellar/llvm/17.0.4/bin
+
+# produce assembly file
+./clang -S -target mips -mcpu=mips3 .../mips_examples/main.c -o .../mips_examples/main.s
+
+# run assembler to produce object file (binary)
+./clang -c -target mips -mcpu=mips3 .../mips_examples/main.c -o .../mips_examples/main.o
+```
+
+ to get decompiler ghidra
+
+- `brew install --cask ghidra`
+- open `/usr/local/Caskroom/ghidra/10.4-20230928/ghidra_10.4_PUBLIC/Ghidra/Features/Decompiler/os/mac_x86_64/decompiler` to get os permission
+- run with `/usr/local/bin/ghidraRun`
 
 useful links
 
@@ -139,3 +158,12 @@ useful links
 - https://static.miraheze.org/n64wiki/5/55/VR4300-Users-Manual.pdf
 - https://disasm.x32.dev/
 - http://www0.cs.ucl.ac.uk/staff/electran/gc03/pdf/07mips_examples.pdf
+
+
+- other emulators
+  - https://github.com/Hydr8gon/rokuyon/blob/main/src/cpu.cpp
+  - https://github.com/kmc-jp/n64-emu/tree/master/tests/dillonb-n64-tests
+
+
+Pseudo instructions?
+- https://en.m.wikibooks.org/wiki/MIPS_Assembly/Pseudoinstructions
