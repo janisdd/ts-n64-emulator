@@ -60,7 +60,7 @@ import {
   Dsrl_Instruction,
   Dsrlv_Instruction,
   Dsub_Instruction,
-  Dsubu_Instruction,
+  Dsubu_Instruction, Eret_Instruction,
   I_Type_Branch_Instruction,
   I_Type_Instruction,
   I_Type_Offset_Instruction,
@@ -137,7 +137,7 @@ import {
   Tge_Instruction,
   Tgei_Instruction,
   Tgeiu_Instruction,
-  Tgeu_Instruction,
+  Tgeu_Instruction, Tlb_Instruction, Tlbp_Instruction, Tlbr_Instruction, Tlbwi_Instruction, Tlbwr_Instruction,
   Tlt_Instruction,
   Tlti_Instruction,
   Tltiu_Instruction,
@@ -1348,7 +1348,6 @@ function decode_single_binary_instructions(instr_line: int32) {
       const instr = _decode_coprocessor_type_instr(instr_line)
       return instr
     }
-    //--- TODO COP01..COP2
     case 0b010100: //BEQL
     case 0b010101: //BNEL
     case 0b010110: //BLEZL
@@ -2907,11 +2906,69 @@ function _decode_coprocessor_type_instr(instr: int32):
   | Mtc0_Instruction | Mtc1_Instruction | Mtc2_Instruction
   | Ctc1_Instruction | Ctc2_Instruction
   | Dmtc0_Instruction | Dmtc1_Instruction
+  | Tlb_Instruction
   | Reserved_Instruction {
 
   //first 6 bits are opcode (e.g. ADDI)
   const opcode = instr >> 26;
   const coprocessorSubOpCode = (instr >> 21) & 0b11111; //5 bits, 25-21
+
+  const isTlbInstr = (instr >> 25) & 0b1; //1 bit, 25
+
+  if (isTlbInstr === 1) {
+    //tlb instruction
+
+    const tlbSubOpCode = instr & 0b111111; //6 bits, 5-0
+
+    switch (tlbSubOpCode) {
+      case 0b000001: {
+        //TLBR
+        const tlbr_instr: Tlbr_Instruction = {
+          original: instr,
+          op: OpInstr.coprocessor0_func,
+          subOpCode: tlbSubOpCode,
+        }
+        return tlbr_instr
+      }
+      case 0b000010: {
+        //TLBWI
+        const tlbwi_instr: Tlbwi_Instruction = {
+          original: instr,
+          op: OpInstr.coprocessor0_func,
+          subOpCode: tlbSubOpCode,
+        }
+        return tlbwi_instr
+      }
+      case 0b000110: {
+        //TLBWR
+        const tlbwr_instr: Tlbwr_Instruction = {
+          original: instr,
+          op: OpInstr.coprocessor0_func,
+          subOpCode: tlbSubOpCode,
+        }
+        return tlbwr_instr
+      }
+      case 0b001000: {
+        //Tlbp
+        const tlbp_instr: Tlbp_Instruction = {
+          original: instr,
+          op: OpInstr.coprocessor0_func,
+          subOpCode: tlbSubOpCode,
+        }
+        return tlbp_instr
+      }
+      case 0b011000: {
+        //ERET
+        const eret_instr: Eret_Instruction = {
+          original: instr,
+          op: OpInstr.coprocessor0_func,
+          subOpCode: tlbSubOpCode,
+        }
+        return eret_instr
+      }
+    }
+
+  }
 
   switch (coprocessorSubOpCode) {
 

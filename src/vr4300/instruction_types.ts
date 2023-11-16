@@ -5,11 +5,13 @@ export type float64 = number
 
 export type int26 = number // 26 bits
 export type int20 = number // 20 bits
+export type int19 = number // 19 bits
 export type int16 = number // 16 bits
 export type int11 = number // 11 bits
 export type int10 = number // 10 bits
 export type int6 = number // 6 bits
 export type int5 = number // 5 bits
+export type int1 = number // 1 bit
 
 export interface InstructionOld {
   opcode: int32,
@@ -106,10 +108,6 @@ export enum OpInstr {
   coprocessor2_func = 0b010010,
 }
 
-export enum OpInstrWithCoprocessor {
-
-}
-
 /**
  * operations encoded in the last 6 bits (funct)
  */
@@ -204,6 +202,14 @@ export enum BranchConditionCode {
   bctl = 0b00011,
 }
 
+
+export enum TlbOpCode {
+  tlbr = 0b000001,
+  tlbwi = 0b000010,
+  tlbwr = 0b000110,
+  tlbp = 0b001000,
+  eret = 0b011000,
+}
 
 //--- op code: special, R_Type_Instruction ---
 
@@ -1108,3 +1114,34 @@ export interface Jal_Instruction extends Instruction {
   op: OpInstr.jal
   target: int26
 }
+
+
+//TLB instructions
+
+export interface Tlb_Instruction extends Instruction {
+  op: OpInstr.coprocessor0_func
+  // coprocessor: 1
+  // unused: int19 & 0
+  subOpCode: TlbOpCode
+}
+
+export interface Tlbr_Instruction extends Tlb_Instruction {
+  subOpCode: TlbOpCode.tlbr
+}
+
+export interface Tlbwi_Instruction extends Tlb_Instruction {
+  subOpCode: TlbOpCode.tlbwi
+}
+
+export interface Tlbwr_Instruction extends Tlb_Instruction {
+  subOpCode: TlbOpCode.tlbwr
+}
+
+export interface Tlbp_Instruction extends Tlb_Instruction {
+  subOpCode: TlbOpCode.tlbp
+}
+
+export interface Eret_Instruction extends Tlb_Instruction {
+  subOpCode: TlbOpCode.eret
+}
+
