@@ -136,10 +136,10 @@ cross compile with clang:
 /usr/local/Cellar/llvm/17.0.4/bin
 
 # produce assembly file
-./clang -S -target mips -mcpu=mips3 .../mips_examples/main.c -o .../mips_examples/main.s
+./clang -S -target mips -mcpu=mips3 /Users/janis/Documents/Projects/Web/ts-n64-emulator/mips_examples/main.c -o /Users/janis/Documents/Projects/Web/ts-n64-emulator/mips_examples/main.s
 
 # run assembler to produce object file (binary)
-./clang -c -target mips -mcpu=mips3 .../mips_examples/main.c -o .../mips_examples/main.o
+./clang -c -target mips -mcpu=mips3 /Users/janis/Documents/Projects/Web/ts-n64-emulator/mips_examples/main.c -o /Users/janis/Documents/Projects/Web/ts-n64-emulator/mips_examples/main.o
 ```
 
  to get decompiler ghidra
@@ -167,3 +167,18 @@ useful links
 
 Pseudo instructions?
 - https://en.m.wikibooks.org/wiki/MIPS_Assembly/Pseudoinstructions
+
+- mips assembly data segments
+  - https://eng.libretexts.org/Bookshelves/Computer_Science/Programming_Languages/Introduction_To_MIPS_Assembly_Language_Programming_(Kann)/06%3A_MIPS_Memory_-_the_Data_Segment/6.02%3A_Static_Data 
+
+
+
+- mips simulator with tests: https://github.com/gioannides/MIPS_SIMULATOR
+  - https://github.com/AzureMarker/mips
+
+
+- ELF format (Executable and Linkable Format binary file on unix)
+  - https://en.wikipedia.org/wiki/Executable_and_Linkable_Format
+
+- https://stackoverflow.com/questions/57924712/inspect-and-get-binary-from-elf-file-on-macos
+- https://en.wikipedia.org/wiki/Objdump
