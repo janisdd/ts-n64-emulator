@@ -148,6 +148,7 @@ import {
   Xori_Instruction
 } from "./instruction_types";
 
+const register_debug_view_prefix = "r";
 
 /**
  * ADD rd, rs, rt
@@ -1274,7 +1275,7 @@ const xori_instr: InstructionOld = {
 }
 
 
-function decode_single_binary_instructions(instr_line: int32) {
+export function decode_single_binary_instructions(instr_line: int32) {
 
   //all instructions are 32 bits long
 
@@ -1431,6 +1432,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `add ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return add_instr
     }
@@ -1444,6 +1446,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `addu ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return addu_instr
     }
@@ -1457,6 +1460,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `and ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return and_instr
     }
@@ -1470,6 +1474,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `dadd ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return dadd_instr
     }
@@ -1483,6 +1488,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `daddu ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return daddu_instr
     }
@@ -1496,6 +1502,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd: 0,
         sa: 0,
         func,
+        debug_view: `ddiv ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return ddiv_instr
     }
@@ -1509,6 +1516,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd: 0,
         sa: 0,
         func,
+        debug_view: `ddivu ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return ddivu_instr
     }
@@ -1522,6 +1530,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd: 0,
         sa: 0,
         func,
+        debug_view: `div ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return div_instr
     }
@@ -1535,6 +1544,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd: 0,
         sa: 0,
         func,
+        debug_view: `divu ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return divu_instr
     }
@@ -1548,6 +1558,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd: 0,
         sa: 0,
         func,
+        debug_view: `dmult ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return dmult_instr
     }
@@ -1561,6 +1572,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd: 0,
         sa: 0,
         func,
+        debug_view: `dmultu ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return dmultu_instr
     }
@@ -1574,6 +1586,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa,
         func,
+        debug_view: `dsll ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${sa}`
       }
       return dsll_instr
     }
@@ -1587,6 +1600,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `dsllv ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}`
       }
       return dsllv_instr
     }
@@ -1600,6 +1614,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa,
         func,
+        debug_view: `dsll32 ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${sa}`
       }
       return dsll32_instr
     }
@@ -1613,6 +1628,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa,
         func,
+        debug_view: `dsra ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${sa}`
       }
       return dsra_instr
     }
@@ -1626,6 +1642,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `dsrav ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}`
       }
       return dsrav_instr
     }
@@ -1639,6 +1656,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa,
         func,
+        debug_view: `dsra32 ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${sa}`
       }
       return dsra32_instr
     }
@@ -1652,6 +1670,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa,
         func,
+        debug_view: `dsrl ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${sa}`
       }
       return dsrl_instr
     }
@@ -1665,6 +1684,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `dsrlv ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}`
       }
       return dsrlv_instr
     }
@@ -1678,6 +1698,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa,
         func,
+        debug_view: `dsrl32 ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${sa}`
       }
       return dsrl32_instr
     }
@@ -1691,6 +1712,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `dsub ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return dsub_instr
     }
@@ -1704,6 +1726,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `dsubu ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return dsubu_instr
     }
@@ -1717,6 +1740,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd, //optional, defaults to 31
         sa: 0,
         func,
+        debug_view: `jalr ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rs}`
       }
       return jalr_instr
     }
@@ -1730,6 +1754,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd: 0,
         sa: 0,
         func,
+        debug_view: `jr ${register_debug_view_prefix}${rs}`
       }
       return jr_instr
     }
@@ -1743,6 +1768,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd: 0,
         sa: 0,
         func,
+        debug_view: `mult ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return mult_instr
     }
@@ -1756,6 +1782,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd: 0,
         sa: 0,
         func,
+        debug_view: `multu ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return mult_instr
     }
@@ -1769,6 +1796,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `nor ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return nor_instr
     }
@@ -1782,6 +1810,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `or ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return or_instr
     }
@@ -1795,6 +1824,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa,
         func,
+        debug_view: `sll ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${sa}`
       }
       return sll_instr
     }
@@ -1808,6 +1838,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `sllv ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}`
       }
       return sllv_instr
     }
@@ -1821,6 +1852,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `slt ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return slt_instr
     }
@@ -1834,6 +1866,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `sltu ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return sltu_instr
     }
@@ -1847,6 +1880,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa,
         func,
+        debug_view: `sra ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${sa}`
       }
       return sltu_instr
     }
@@ -1860,6 +1894,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `srav ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}`
       }
       return srav_instr
     }
@@ -1873,6 +1908,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa,
         func,
+        debug_view: `srl ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${sa}`
       }
       return srl_instr
     }
@@ -1886,6 +1922,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `srlv ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}`
       }
       return srl_instr
     }
@@ -1899,6 +1936,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `sub ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return sub_instr
     }
@@ -1912,6 +1950,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `subu ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return subu_instr
     }
@@ -1925,6 +1964,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd: 0,
         sa: 0,
         func,
+        debug_view: `sync`
       }
       return sync_instr
     }
@@ -1935,12 +1975,13 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
       const sync_instr: Syscall_Instruction = {
         original: instr,
         op: OpInstr.special,
-        rs: null,
-        rt: null,
-        rd: null,
-        sa: null,
+        rs: 0,
+        rt: 0,
+        rd: 0,
+        sa: 0,
         code,
         func,
+        debug_view: `syscall`
       }
       return sync_instr
     }
@@ -1953,10 +1994,11 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         op: OpInstr.special,
         rs,
         rt,
-        rd: null,
-        sa: null,
+        rd: 0,
+        sa: 0,
         code,
         func,
+        debug_view: `teq ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return teq_instr
     }
@@ -1969,10 +2011,11 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         op: OpInstr.special,
         rs,
         rt,
-        rd: null,
-        sa: null,
+        rd: 0,
+        sa: 0,
         code,
         func,
+        debug_view: `tge ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return tge_instr
     }
@@ -1985,10 +2028,11 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         op: OpInstr.special,
         rs,
         rt,
-        rd: null,
-        sa: null,
+        rd: 0,
+        sa: 0,
         code,
         func,
+        debug_view: `tgeu ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return tgeu_instr
     }
@@ -2001,10 +2045,11 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         op: OpInstr.special,
         rs,
         rt,
-        rd: null,
-        sa: null,
+        rd: 0,
+        sa: 0,
         code,
         func,
+        debug_view: `tlt ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return tlt_instr
     }
@@ -2017,10 +2062,11 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         op: OpInstr.special,
         rs,
         rt,
-        rd: null,
-        sa: null,
+        rd: 0,
+        sa: 0,
         code,
         func,
+        debug_view: `tltu ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return tltu_instr
     }
@@ -2033,10 +2079,11 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         op: OpInstr.special,
         rs,
         rt,
-        rd: null,
-        sa: null,
+        rd: 0,
+        sa: 0,
         code,
         func,
+        debug_view: `tne ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return tne_instr
     }
@@ -2050,6 +2097,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa: 0,
         func,
+        debug_view: `xor ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rs}, ${register_debug_view_prefix}${rt}`
       }
       return xor_instr
     }
@@ -2062,6 +2110,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
   const reserved_instr: Reserved_Instruction = {
     original: instr,
     op: OpInstr.reserved,
+    debug_view: "reserved instruction",
   }
 
   return reserved_instr
@@ -2069,7 +2118,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
 
 
 //we don't have a reserved instruction catch here, as the calling function knows all op codes for this
-function _decode_single_i_type_instr(instr: int32): I_Type_Instruction {
+function _decode_single_i_type_instr(instr: int32): I_Type_Instruction | Reserved_Instruction {
 
   //I-Type (ADDI, ADDIU, ANDI, BEQ, BGEZ, BGEZAL, BGEZALL, BGEZL, BGTZ, BLEZ, BLTZ, BLTZAL, BLTZALL, BLTZL, BNE, LB, LBU, LH, LHU, LUI, LW, ORI, SB, SH, SLTI, SLTIU, SW, XORI)
 
@@ -2089,6 +2138,7 @@ function _decode_single_i_type_instr(instr: int32): I_Type_Instruction {
         rs,
         rt,
         immediate,
+        debug_view: `addi ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return addi_instr
     }
@@ -2100,6 +2150,7 @@ function _decode_single_i_type_instr(instr: int32): I_Type_Instruction {
         rs,
         rt,
         immediate,
+        debug_view: `addiu ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return addiu_instr
     }
@@ -2111,6 +2162,7 @@ function _decode_single_i_type_instr(instr: int32): I_Type_Instruction {
         rs,
         rt,
         immediate,
+        debug_view: `slti ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return slti_instr
     }
@@ -2122,6 +2174,7 @@ function _decode_single_i_type_instr(instr: int32): I_Type_Instruction {
         rs,
         rt,
         immediate,
+        debug_view: `sltiu ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return sltiu_instr
     }
@@ -2133,6 +2186,7 @@ function _decode_single_i_type_instr(instr: int32): I_Type_Instruction {
         rs,
         rt,
         immediate,
+        debug_view: `andi ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return andi_instr
     }
@@ -2144,6 +2198,7 @@ function _decode_single_i_type_instr(instr: int32): I_Type_Instruction {
         rs,
         rt,
         immediate,
+        debug_view: `ori ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return ori_instr
     }
@@ -2156,6 +2211,7 @@ function _decode_single_i_type_instr(instr: int32): I_Type_Instruction {
         rs,
         rt,
         immediate,
+        debug_view: `xori ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return xori_instr
     }
@@ -2167,6 +2223,7 @@ function _decode_single_i_type_instr(instr: int32): I_Type_Instruction {
         rs: 0,
         rt,
         immediate,
+        debug_view: `lui ${register_debug_view_prefix}${rt}, ${immediate}`,
       }
       return lui_instr
     }
@@ -2180,6 +2237,7 @@ function _decode_single_i_type_instr(instr: int32): I_Type_Instruction {
         rs,
         rt,
         immediate,
+        debug_view: `daddi ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return daddi_instr
     }
@@ -2191,6 +2249,7 @@ function _decode_single_i_type_instr(instr: int32): I_Type_Instruction {
         rs,
         rt,
         immediate,
+        debug_view: `daddiu ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return daddi_instr
     }
@@ -2198,10 +2257,17 @@ function _decode_single_i_type_instr(instr: int32): I_Type_Instruction {
 
   }
 
+  const reserved_instr: Reserved_Instruction = {
+    original: instr,
+    op: OpInstr.reserved,
+    debug_view: "reserved instruction",
+  }
+
+  return reserved_instr
 }
 
 //we don't have a reserved instruction catch here, as the calling function knows all op codes for this
-function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruction | Cache_Instruction {
+function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruction | Cache_Instruction | Reserved_Instruction {
 
   //I-Type (ADDI, ADDIU, ANDI, BEQ, BGEZ, BGEZAL, BGEZALL, BGEZL, BGTZ, BLEZ, BLTZ, BLTZAL, BLTZALL, BLTZL, BNE, LB, LBU, LH, LHU, LUI, LW, ORI, SB, SH, SLTI, SLTIU, SW, XORI)
 
@@ -2221,6 +2287,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `ldl ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return ldl_instr
     }
@@ -2232,6 +2299,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `ldr ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return ldr_instr
     }
@@ -2243,6 +2311,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `lb ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return lb_instr
     }
@@ -2254,6 +2323,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `lh ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return lh_instr
     }
@@ -2265,6 +2335,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `lwl ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return lwl_instr
     }
@@ -2276,6 +2347,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `lw ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return lw_instr
     }
@@ -2287,6 +2359,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `lbu ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return lbu_instr
     }
@@ -2298,6 +2371,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `lhu ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return lhu_instr
     }
@@ -2309,6 +2383,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `lwr ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return lwr_instr
     }
@@ -2320,6 +2395,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `lwu ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return lwu_instr
     }
@@ -2331,6 +2407,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `sb ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return sb_instr
     }
@@ -2342,6 +2419,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `sh ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return sh_instr
     }
@@ -2353,6 +2431,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `swl ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return swl_instr
     }
@@ -2364,6 +2443,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `sw ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return sw_instr
     }
@@ -2375,6 +2455,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `sdl ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return sdl_instr
     }
@@ -2386,6 +2467,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `sdr ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return sdr_instr
     }
@@ -2397,6 +2479,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `swr ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return swr_instr
     }
@@ -2408,6 +2491,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         operation: rt,
         offset,
+        debug_view: `cache ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return cache_instr
     }
@@ -2419,6 +2503,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `ll ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return ll_instr
     }
@@ -2431,6 +2516,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `lwc1 ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return lwcz_instr
     }
@@ -2443,6 +2529,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `lwc2 ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return lwcz_instr
     }
@@ -2454,6 +2541,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `lld ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return lhu_instr
     }
@@ -2466,6 +2554,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `ldc1 ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return ldcz_instr
     }
@@ -2478,6 +2567,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `ldc2 ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return ldcz_instr
     }
@@ -2489,6 +2579,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `ld ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return ld_instr
     }
@@ -2500,6 +2591,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `sc ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return sc_instr
     }
@@ -2512,6 +2604,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `swc1 ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return swcz_instr
     }
@@ -2524,6 +2617,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `swc2 ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return swcz_instr
     }
@@ -2535,6 +2629,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `scd ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return scb_instr
     }
@@ -2547,6 +2642,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `sdc1 ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return sdcz_instr
     }
@@ -2559,6 +2655,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `sdc2 ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return sdcz_instr
     }
@@ -2570,17 +2667,25 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
         base,
         rt,
         offset,
+        debug_view: `sd ${register_debug_view_prefix}${rt}, ${offset}(${register_debug_view_prefix}${base})`,
       }
       return scb_instr
     }
 
   }
 
+  const reserved_instr: Reserved_Instruction = {
+    original: instr,
+    op: OpInstr.reserved,
+    debug_view: "reserved instruction",
+  }
+
+  return reserved_instr
 
 }
 
 //we don't have a reserved instruction catch here, as the calling function knows all op codes for this
-function _decode_single_i_type_branch_instr(instr: int32): I_Type_Branch_Instruction {
+function _decode_single_i_type_branch_instr(instr: int32): I_Type_Branch_Instruction | Reserved_Instruction {
 
   //I-Type (ADDI, ADDIU, ANDI, BEQ, BGEZ, BGEZAL, BGEZALL, BGEZL, BGTZ, BLEZ, BLTZ, BLTZAL, BLTZALL, BLTZL, BNE, LB, LBU, LH, LHU, LUI, LW, ORI, SB, SH, SLTI, SLTIU, SW, XORI)
 
@@ -2600,6 +2705,7 @@ function _decode_single_i_type_branch_instr(instr: int32): I_Type_Branch_Instruc
         rs,
         rt,
         offset,
+        debug_view: `beq ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}, ${offset}`,
       }
       return beq_instr
     }
@@ -2611,6 +2717,7 @@ function _decode_single_i_type_branch_instr(instr: int32): I_Type_Branch_Instruc
         rs,
         rt,
         offset,
+        debug_view: `bne ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}, ${offset}`,
       }
       return bne_instr
     }
@@ -2622,6 +2729,7 @@ function _decode_single_i_type_branch_instr(instr: int32): I_Type_Branch_Instruc
         rs,
         rt: 0,
         offset,
+        debug_view: `blez ${register_debug_view_prefix}${rs}, ${offset}`,
       }
       return blez_instr
     }
@@ -2633,6 +2741,7 @@ function _decode_single_i_type_branch_instr(instr: int32): I_Type_Branch_Instruc
         rs,
         rt: 0,
         offset,
+        debug_view: `bgtz ${register_debug_view_prefix}${rs}, ${offset}`,
       }
       return bgtz_instr
     }
@@ -2645,6 +2754,7 @@ function _decode_single_i_type_branch_instr(instr: int32): I_Type_Branch_Instruc
         rs,
         rt,
         offset,
+        debug_view: `beql ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}, ${offset}`,
       }
       return beql_instr
     }
@@ -2656,6 +2766,7 @@ function _decode_single_i_type_branch_instr(instr: int32): I_Type_Branch_Instruc
         rs,
         rt,
         offset,
+        debug_view: `bnel ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rs}, ${offset}`,
       }
       return bnel_instr
     }
@@ -2667,6 +2778,7 @@ function _decode_single_i_type_branch_instr(instr: int32): I_Type_Branch_Instruc
         rs,
         rt: 0,
         offset,
+        debug_view: `blezl ${register_debug_view_prefix}${rs}, ${offset}`,
       }
       return blezl_instr
     }
@@ -2678,12 +2790,20 @@ function _decode_single_i_type_branch_instr(instr: int32): I_Type_Branch_Instruc
         rs,
         rt: 0,
         offset,
+        debug_view: `bgtzl ${register_debug_view_prefix}${rs}, ${offset}`,
       }
       return bgtzl_instr
     }
 
   }
 
+  const reserved_instr: Reserved_Instruction = {
+    original: instr,
+    op: OpInstr.reserved,
+    debug_view: "reserved instruction",
+  }
+
+  return reserved_instr
 }
 
 
@@ -2708,6 +2828,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
         rs,
         subOp,
         immediate,
+        debug_view: `tgei ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return tgei_instr
     }
@@ -2719,6 +2840,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
         rs,
         subOp,
         immediate,
+        debug_view: `tgeiu ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return tgeiu_instr
     }
@@ -2730,6 +2852,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
         rs,
         subOp,
         immediate,
+        debug_view: `tlti ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return tlti_instr
     }
@@ -2741,6 +2864,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
         rs,
         subOp,
         immediate,
+        debug_view: `tltiu ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return tltiu_instr
     }
@@ -2752,6 +2876,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
         rs,
         subOp,
         immediate,
+        debug_view: `teqi ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return teqi_instr
     }
@@ -2763,6 +2888,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
         rs,
         subOp,
         immediate,
+        debug_view: `tnei ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return tnei_instr
     }
@@ -2775,6 +2901,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
         rs,
         subOp,
         offset: immediate,
+        debug_view: `bltz ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return bltz_instr
     }
@@ -2786,6 +2913,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
         rs,
         subOp,
         offset: immediate,
+        debug_view: `bgez ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return bgez_instr
     }
@@ -2797,6 +2925,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
         rs,
         subOp,
         offset: immediate,
+        debug_view: `bltzl ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return bltzl_instr
     }
@@ -2808,6 +2937,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
         rs,
         subOp,
         offset: immediate,
+        debug_view: `bgezl ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return bgezl_instr
     }
@@ -2820,6 +2950,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
         rs,
         subOp,
         offset: immediate,
+        debug_view: `bltzal ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return bltzal_instr
     }
@@ -2831,6 +2962,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
         rs,
         subOp,
         offset: immediate,
+        debug_view: `bgezal ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return bgezal_instr
     }
@@ -2842,6 +2974,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
         rs,
         subOp,
         offset: immediate,
+        debug_view: `bltzall ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return bltzall_instr
     }
@@ -2853,6 +2986,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
         rs,
         subOp,
         offset: immediate,
+        debug_view: `bgezall ${register_debug_view_prefix}${rs}, ${immediate}`,
       }
       return bgezall_instr
     }
@@ -2861,13 +2995,14 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
   const reserved_instr: Reserved_Instruction = {
     original: instr,
     op: OpInstr.reserved,
+    debug_view: "reserved instruction",
   }
 
   return reserved_instr
 
 }
 
-function _decode_single_j_type_instr(instr: int32): J_Type_Instruction {
+function _decode_single_j_type_instr(instr: int32): J_Type_Instruction | Reserved_Instruction {
 
   //first 6 bits are opcode (e.g. ADDI)
   const opcode = instr >> 26;
@@ -2882,6 +3017,7 @@ function _decode_single_j_type_instr(instr: int32): J_Type_Instruction {
         original: instr,
         op: OpInstr.j,
         target,
+        debug_view: `j ${target}`,
       }
       return j_instr
     }
@@ -2891,11 +3027,19 @@ function _decode_single_j_type_instr(instr: int32): J_Type_Instruction {
         original: instr,
         op: OpInstr.jal,
         target,
+        debug_view: `jal ${target}`,
       }
       return jal_instr
     }
   }
 
+  const reserved_instr: Reserved_Instruction = {
+    original: instr,
+    op: OpInstr.reserved,
+    debug_view: "reserved instruction",
+  }
+
+  return reserved_instr
 }
 
 
@@ -2927,6 +3071,7 @@ function _decode_coprocessor_type_instr(instr: int32):
           original: instr,
           op: OpInstr.coprocessor0_func,
           subOpCode: tlbSubOpCode,
+          debug_view: "tlbr",
         }
         return tlbr_instr
       }
@@ -2936,6 +3081,7 @@ function _decode_coprocessor_type_instr(instr: int32):
           original: instr,
           op: OpInstr.coprocessor0_func,
           subOpCode: tlbSubOpCode,
+          debug_view: "tlbwi",
         }
         return tlbwi_instr
       }
@@ -2945,6 +3091,7 @@ function _decode_coprocessor_type_instr(instr: int32):
           original: instr,
           op: OpInstr.coprocessor0_func,
           subOpCode: tlbSubOpCode,
+          debug_view: "tlbwr",
         }
         return tlbwr_instr
       }
@@ -2954,6 +3101,7 @@ function _decode_coprocessor_type_instr(instr: int32):
           original: instr,
           op: OpInstr.coprocessor0_func,
           subOpCode: tlbSubOpCode,
+          debug_view: "tlbp",
         }
         return tlbp_instr
       }
@@ -2963,6 +3111,7 @@ function _decode_coprocessor_type_instr(instr: int32):
           original: instr,
           op: OpInstr.coprocessor0_func,
           subOpCode: tlbSubOpCode,
+          debug_view: "eret",
         }
         return eret_instr
       }
@@ -2986,7 +3135,8 @@ function _decode_coprocessor_type_instr(instr: int32):
             subOpCode: coprocessorSubOpCode,
             rt,
             rd,
-            rest: 0
+            rest: 0,
+            debug_view: `mfc0 ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rd}`,
           }
           return mfc0_instr
         }
@@ -2998,7 +3148,8 @@ function _decode_coprocessor_type_instr(instr: int32):
             subOpCode: coprocessorSubOpCode,
             rt,
             rd,
-            rest: 0
+            rest: 0,
+            debug_view: `mfc1 ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rd}`,
           }
           return mfc1_instr
         }
@@ -3010,7 +3161,8 @@ function _decode_coprocessor_type_instr(instr: int32):
             subOpCode: coprocessorSubOpCode,
             rt,
             rd,
-            rest: 0
+            rest: 0,
+            debug_view: `mfc2 ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rd}`,
           }
           return mfc2_instr
         }
@@ -3033,7 +3185,8 @@ function _decode_coprocessor_type_instr(instr: int32):
             subOpCode: coprocessorSubOpCode,
             rt,
             rd: rd_or_fs,
-            rest: 0
+            rest: 0,
+            debug_view: `dmfc0 ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rd_or_fs}`,
           }
           return mfc0_instr
         }
@@ -3045,7 +3198,8 @@ function _decode_coprocessor_type_instr(instr: int32):
             subOpCode: coprocessorSubOpCode,
             rt,
             fs: rd_or_fs,
-            rest: 0
+            rest: 0,
+            debug_view: `dmfc1 ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rd_or_fs}`,
           }
           return mfc1_instr
         }
@@ -3068,7 +3222,8 @@ function _decode_coprocessor_type_instr(instr: int32):
             subOpCode: coprocessorSubOpCode,
             rt,
             fs: rd_or_fs,
-            rest: 0
+            rest: 0,
+            debug_view: `cfc1 ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rd_or_fs}`,
           }
           return mfc0_instr
         }
@@ -3080,7 +3235,8 @@ function _decode_coprocessor_type_instr(instr: int32):
             subOpCode: coprocessorSubOpCode,
             rt,
             rd: rd_or_fs,
-            rest: 0
+            rest: 0,
+            debug_view: `cfc2 ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rd_or_fs}`,
           }
           return mfc1_instr
         }
@@ -3102,7 +3258,8 @@ function _decode_coprocessor_type_instr(instr: int32):
             subOpCode: coprocessorSubOpCode,
             rt,
             rd: rd_or_fs,
-            rest: 0
+            rest: 0,
+            debug_view: `mtc0 ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rd_or_fs}`,
           }
           return mfc0_instr
         }
@@ -3114,7 +3271,8 @@ function _decode_coprocessor_type_instr(instr: int32):
             subOpCode: coprocessorSubOpCode,
             rt,
             fs: rd_or_fs,
-            rest: 0
+            rest: 0,
+            debug_view: `mtc1 ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rd_or_fs}`,
           }
           return mfc1_instr
         }
@@ -3126,7 +3284,8 @@ function _decode_coprocessor_type_instr(instr: int32):
             subOpCode: coprocessorSubOpCode,
             rt,
             rd: rd_or_fs,
-            rest: 0
+            rest: 0,
+            debug_view: `mtc2 ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rd_or_fs}`,
           }
           return mfc2_instr
         }
@@ -3149,7 +3308,8 @@ function _decode_coprocessor_type_instr(instr: int32):
             subOpCode: coprocessorSubOpCode,
             rt,
             rd: rd_or_fs,
-            rest: 0
+            rest: 0,
+            debug_view: `dmtc0 ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rd_or_fs}`,
           }
           return mfc0_instr
         }
@@ -3161,7 +3321,8 @@ function _decode_coprocessor_type_instr(instr: int32):
             subOpCode: coprocessorSubOpCode,
             rt,
             fs: rd_or_fs,
-            rest: 0
+            rest: 0,
+            debug_view: `dmtc1 ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rd_or_fs}`,
           }
           return mfc1_instr
         }
@@ -3183,7 +3344,8 @@ function _decode_coprocessor_type_instr(instr: int32):
             subOpCode: coprocessorSubOpCode,
             rt,
             fs: rd_or_fs,
-            rest: 0
+            rest: 0,
+            debug_view: `ctc1 ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rd_or_fs}`,
           }
           return mfc1_instr
         }
@@ -3195,7 +3357,8 @@ function _decode_coprocessor_type_instr(instr: int32):
             subOpCode: coprocessorSubOpCode,
             rt,
             rd: rd_or_fs,
-            rest: 0
+            rest: 0,
+            debug_view: `ctc2 ${register_debug_view_prefix}${rt}, ${register_debug_view_prefix}${rd_or_fs}`,
           }
           return mfc2_instr
         }
@@ -3221,6 +3384,7 @@ function _decode_coprocessor_type_instr(instr: int32):
                 subOpCode: coprocessorSubOpCode,
                 branchCondition: BranchConditionCode.bcf,
                 offset,
+                debug_view: `bc0f ${offset}`,
               }
               return bc1f_instr
             }
@@ -3232,6 +3396,7 @@ function _decode_coprocessor_type_instr(instr: int32):
                 subOpCode: coprocessorSubOpCode,
                 branchCondition: BranchConditionCode.bcf,
                 offset,
+                debug_view: `bc1f ${offset}`,
               }
               return bc1f_instr
             }
@@ -3243,6 +3408,7 @@ function _decode_coprocessor_type_instr(instr: int32):
                 subOpCode: coprocessorSubOpCode,
                 branchCondition: BranchConditionCode.bcf,
                 offset,
+                debug_view: `bc2f ${offset}`,
               }
               return bc1f_instr
             }
@@ -3261,6 +3427,7 @@ function _decode_coprocessor_type_instr(instr: int32):
                 subOpCode: coprocessorSubOpCode,
                 branchCondition: BranchConditionCode.bcfl,
                 offset,
+                debug_view: `bc0fl ${offset}`,
               }
               return bc1f_instr
             }
@@ -3272,6 +3439,7 @@ function _decode_coprocessor_type_instr(instr: int32):
                 subOpCode: coprocessorSubOpCode,
                 branchCondition: BranchConditionCode.bcfl,
                 offset,
+                debug_view: `bc1fl ${offset}`,
               }
               return bc1f_instr
             }
@@ -3283,6 +3451,7 @@ function _decode_coprocessor_type_instr(instr: int32):
                 subOpCode: coprocessorSubOpCode,
                 branchCondition: BranchConditionCode.bcfl,
                 offset,
+                debug_view: `bc2fl ${offset}`,
               }
               return bc1f_instr
             }
@@ -3301,6 +3470,7 @@ function _decode_coprocessor_type_instr(instr: int32):
                 subOpCode: coprocessorSubOpCode,
                 branchCondition: BranchConditionCode.bct,
                 offset,
+                debug_view: `bc0t ${offset}`,
               }
               return bc1f_instr
             }
@@ -3312,6 +3482,7 @@ function _decode_coprocessor_type_instr(instr: int32):
                 subOpCode: coprocessorSubOpCode,
                 branchCondition: BranchConditionCode.bct,
                 offset,
+                debug_view: `bc1t ${offset}`,
               }
               return bc1f_instr
             }
@@ -3323,6 +3494,7 @@ function _decode_coprocessor_type_instr(instr: int32):
                 subOpCode: coprocessorSubOpCode,
                 branchCondition: BranchConditionCode.bct,
                 offset,
+                debug_view: `bc2t ${offset}`,
               }
               return bc1f_instr
             }
@@ -3341,6 +3513,7 @@ function _decode_coprocessor_type_instr(instr: int32):
                 subOpCode: coprocessorSubOpCode,
                 branchCondition: BranchConditionCode.bctl,
                 offset,
+                debug_view: `bc0tl ${offset}`,
               }
               return bc1f_instr
             }
@@ -3352,6 +3525,7 @@ function _decode_coprocessor_type_instr(instr: int32):
                 subOpCode: coprocessorSubOpCode,
                 branchCondition: BranchConditionCode.bctl,
                 offset,
+                debug_view: `bc1tl ${offset}`,
               }
               return bc1f_instr
             }
@@ -3363,19 +3537,12 @@ function _decode_coprocessor_type_instr(instr: int32):
                 subOpCode: coprocessorSubOpCode,
                 branchCondition: BranchConditionCode.bctl,
                 offset,
+                debug_view: `bc2tl ${offset}`,
               }
               return bc1f_instr
             }
           }
           break
-        }
-        default: {
-          const reserved_instr: Reserved_Instruction = {
-            original: instr,
-            op: OpInstr.reserved,
-          }
-
-          return reserved_instr
         }
       }
       break
@@ -3388,6 +3555,7 @@ function _decode_coprocessor_type_instr(instr: int32):
   const reserved_instr: Reserved_Instruction = {
     original: instr,
     op: OpInstr.reserved,
+    debug_view: "reserved instruction",
   }
 
   return reserved_instr

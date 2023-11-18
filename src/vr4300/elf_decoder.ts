@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {decode_single_binary_instructions} from './cpu_instructions'
 
 
 //see https://en.wikipedia.org/wiki/Executable_and_Linkable_Format
@@ -97,7 +98,7 @@ const uInt8Schema: z.ZodType<Uint8Array> = z.custom<Uint8Array>((val) => {
   return val instanceof Uint8Array;
 });
 
-const elHeader32 = z.object({
+const ElHeader32Schema = z.object({
   // /**
   //  * 0x7F followed by ELF(45 4c 46) in ASCII; these four bytes constitute the magic number
   //  */
@@ -208,9 +209,9 @@ const elHeader32 = z.object({
 
 })
 
-type ElHeader32 = z.infer<typeof elHeader32>
+type ElHeader32 = z.infer<typeof ElHeader32Schema>
 
-const elSectionHeader32 = z.object({
+const ElSectionHeader32SChema = z.object({
 
   /**
    * An offset to a string in the .shstrtab section that represents the name of this section.
@@ -270,9 +271,9 @@ const elSectionHeader32 = z.object({
   sectionData: uInt8Schema,
 })
 
-type ElSectionHeader32 = z.infer<typeof elSectionHeader32>
+type ElSectionHeader32 = z.infer<typeof ElSectionHeader32SChema>
 
-const programHeader32 = z.object({
+const ProgramHeader32Schema = z.object({
   /**
    * Identifies the type of the segment.
    */
@@ -319,7 +320,16 @@ const programHeader32 = z.object({
   sectionData: uInt8Schema,
 })
 
-type ProgramHeader32 = z.infer<typeof programHeader32>
+type ProgramHeader32 = z.infer<typeof ProgramHeader32Schema>
+
+
+const ElfFileSchema = z.object({
+  header: ElHeader32Schema,
+  sectionHeaders: z.array(ElSectionHeader32SChema),
+  programHeaders: z.array(ProgramHeader32Schema),
+})
+
+type ElfFile = z.infer<typeof ElfFileSchema>
 
 
 class Elf_decoder {
@@ -329,6 +339,18 @@ class Elf_decoder {
 
   public static _test() {
 
+    /*
+    asm(".set noreorder");
+
+    int main() {
+  int i = 2;
+  int j = i * 2;
+  char* str = "Hello World\n";
+  char* str2 = "Janis\n";
+// 	printf("Hello World\n");
+	return 5;
+}
+     */
     const _test = `7f45 4c46 0102 0100 0000 0000 0000 0000
 0001 0008 0000 0001 0000 0000 0000 0000
 0000 0240 5000 1005 0034 0000 0000 0028
@@ -409,12 +431,37 @@ e000 0007 0000 0000 0000 0000 0000 0000
     const bytes = _test.split(/[ \n]/gm).map(p => [p.substring(0, 2), p.substring(2)]).flat().map((x) => parseInt(x, 16))
     const buffer = new Uint8Array(bytes)
 
-    this.decode(buffer)
+    const elfFile = this.decode(buffer)
 
+    const programInstructionsEncoded = elfFile.sectionHeaders.find(p => p._name === '.text')!.sectionData
+
+    const view = new DataView(programInstructionsEncoded.buffer)
+
+    const size = programInstructionsEncoded.length / 4 //32 bit instructions
+
+    const allInstrs = []
+
+    //TODO sw/lw not decoded correctly
+    //sll r0 r0 0 --> nop
+    // addiu with negative number not shown
+    // addiu immediate wrong: 	addiu	$1, $1, %lo($.str) | addiu at,at,0x5c
+
+    //byteOffset is required because section data is just a subarray of the original buffer (passed to decode)
+    for (let i = 0; i < size; i++) {
+      const instructionBytes = view.getUint32(i * 4 + programInstructionsEncoded.byteOffset, elfFile.header._isLittleEndian)
+
+      const instr = decode_single_binary_instructions(instructionBytes)
+      allInstrs.push(instr)
+      console.log(instr)
+    }
+
+
+    console.log(allInstrs.map(p => p?.debug_view ?? `unknown instruction`))
+    console.log(allInstrs)
   }
 
 
-  public static decode(binary: Uint8Array) {
+  public static decode(binary: Uint8Array): ElfFile {
     const view = new DataView(binary.buffer)
 
     const cursor: Cursor = {
@@ -430,6 +477,12 @@ e000 0007 0000 0000 0000 0000 0000 0000
     console.log(fileHeader)
     console.log(allSectionHeaders)
     console.log(allProgramHeaders)
+
+    return {
+      header: fileHeader,
+      sectionHeaders: allSectionHeaders,
+      programHeaders: allProgramHeaders,
+    }
 
     //program header
     // if (fileHeader.e_phnum > 0) {

@@ -19,14 +19,14 @@ export interface InstructionOld {
 
 export interface Instruction {
   original: int32
+  debug_view: string
 }
 
 
 /**
  * register
  */
-export interface R_Type_Instruction {
-  original: int32
+export interface R_Type_Instruction extends Instruction {
   op: OpInstr //int6
   rs: int5
   rt: int5
@@ -468,58 +468,58 @@ export interface Sync_Instruction extends R_Type_Instruction {
 
 export interface Syscall_Instruction extends R_Type_Instruction {
   op: OpInstr.special
-  rs: null //set to null to make unusable
-  rt: null
-  rd: null
-  sa: null
+  rs: 0 //set to null to make unusable
+  rt: 0
+  rd: 0
+  sa: 0
   code: int20
   func: FuncInstr.syscall
 }
 
 export interface Teq_Instruction extends R_Type_Instruction {
   op: OpInstr.special
-  rd: null
-  sa: null
+  rd: 0
+  sa: 0
   code: int10
   func: FuncInstr.teq
 }
 
 export interface Tge_Instruction extends R_Type_Instruction {
   op: OpInstr.special
-  rd: null
-  sa: null
+  rd: 0
+  sa: 0
   code: int10
   func: FuncInstr.tge
 }
 
 export interface Tgeu_Instruction extends R_Type_Instruction {
   op: OpInstr.special
-  rd: null
-  sa: null
+  rd: 0
+  sa: 0
   code: int10
   func: FuncInstr.tgeu
 }
 
 export interface Tlt_Instruction extends R_Type_Instruction {
   op: OpInstr.special
-  rd: null
-  sa: null
+  rd: 0
+  sa: 0
   code: int10
   func: FuncInstr.tlt
 }
 
 export interface Tltu_Instruction extends R_Type_Instruction {
   op: OpInstr.special
-  rd: null
-  sa: null
+  rd: 0
+  sa: 0
   code: int10
   func: FuncInstr.tltu
 }
 
 export interface Tne_Instruction extends R_Type_Instruction {
   op: OpInstr.special
-  rd: null
-  sa: null
+  rd: 0
+  sa: 0
   code: int10
   func: FuncInstr.tne
 }
