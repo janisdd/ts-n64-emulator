@@ -179,6 +179,7 @@ Pseudo instructions?
 
 - ELF format (Executable and Linkable Format binary file on unix)
   - https://en.wikipedia.org/wiki/Executable_and_Linkable_Format
+  - sections: https://refspecs.linuxbase.org/elf/gabi4+/ch4.sheader.html
 
 - https://stackoverflow.com/questions/57924712/inspect-and-get-binary-from-elf-file-on-macos
 - https://en.wikipedia.org/wiki/Objdump
