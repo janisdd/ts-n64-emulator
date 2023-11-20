@@ -2127,7 +2127,13 @@ function _decode_single_i_type_instr(instr: int32): I_Type_Instruction | Reserve
 
   const rs = (instr >> 21) & 0b11111; //5 bits, 25-21
   const rt = (instr >> 16) & 0b11111; //5 bits, 20-16
-  const immediate = (instr >> 0) & 0b1111111111111111; //16 bits, 15-0
+  let immediate = (instr >> 0) & 0b1111111111111111; //16 bits, 15-0
+
+  const immediate_negative = (immediate & 0b1000000000000000) !== 0;
+  if (immediate_negative) {
+    //we need to interpret it as 2's complement
+    immediate = immediate - 2**16;
+  }
 
   switch (opcode) {
     case 0b001000: {
@@ -2816,7 +2822,15 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
 
   const rs = (instr >> 21) & 0b11111; //5 bits, 25-21
   const subOp = (instr >> 16) & 0b11111; //5 bits, 20-16
-  const immediate = (instr >> 0) & 0b1111111111111111; //16 bits, 15-0
+  let immediate = (instr >> 0) & 0b1111111111111111; //16 bits, 15-0
+
+  //TODO offset ?? negative
+
+  const immediate_negative = (immediate & 0b1000000000000000) !== 0;
+  if (immediate_negative) {
+    //we need to interpret it as 2's complement
+    immediate = immediate - 2**16;
+  }
 
   //TODO sort like in the manual
   switch (subOp) {

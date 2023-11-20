@@ -165,6 +165,7 @@ useful links
   - https://github.com/kmc-jp/n64-emu/tree/master/tests/dillonb-n64-tests
 
 
+
 Pseudo instructions?
 - https://en.m.wikibooks.org/wiki/MIPS_Assembly/Pseudoinstructions
 
@@ -182,6 +183,8 @@ Pseudo instructions?
   - sections: https://refspecs.linuxbase.org/elf/gabi4+/ch4.sheader.html
 
 - https://github.com/compilepeace/BINARY_DISSECTION_COURSE --> explains ELF in detail
+
+- cross compilation examples: https://noobient.com/2020/12/22/mips-cross-compilation-crash-course/
 
 - https://stackoverflow.com/questions/57924712/inspect-and-get-binary-from-elf-file-on-macos
 - https://en.wikipedia.org/wiki/Objdump
