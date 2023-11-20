@@ -33,68 +33,7 @@ type Cursor = {
   offset: number
 }
 
-
-enum Elf_Osabi {
-  "System V" = 0x00,
-  "HP-UX" = 0x01,
-  "NetBSD" = 0x02,
-  "Linux" = 0x03,
-  "GNU Hurd" = 0x04,
-  "Solaris" = 0x06,
-  "AIX" = 0x07,
-  "IRIX" = 0x08,
-  "FreeBSD" = 0x09,
-  "Tru64" = 0x0A,
-  "Novell Modesto" = 0x0B,
-  "OpenBSD" = 0x0C,
-  "OpenVMS" = 0x0D,
-  "NonStop Kernel" = 0x0E,
-  "AROS" = 0x0F,
-  "Fenix OS" = 0x10,
-  "Nuxi CloudABI" = 0x11,
-  "Stratus Technologies OpenVOS" = 0x12,
-}
-
-enum Elf_Type {
-  /**
-   * Unknown
-   */
-    "ET_NONE" = 0x00,
-  /**
-   * Relocatable file
-   */
-    "EL_REL" = 0x01,
-  /**
-   * Executable file
-   */
-    "ET_EXEC" = 0x02,
-  /**
-   * Shared object file
-   */
-    "ET_DYN" = 0x03,
-  /**
-   * Core file
-   */
-    "ET_CORE" = 0x04,
-  /**
-   * Reserved inclusive range. Operating system specific. (LOw)
-   */
-  ET_LOOS = 0xFE00,
-  /**
-   * Reserved inclusive range. Operating system specific. (High)
-   */
-  ET_HIOS = 0xFEFF,
-  /**
-   * Reserved inclusive range. Processor specific. (Low)
-   */
-  ET_LOPROC = 0xFF00,
-  /**
-   * Reserved inclusive range. Processor specific. (High)
-   */
-  ET_HIPROC = 0xFFFF,
-}
-
-const uInt8Schema: z.ZodType<Uint8Array> = z.custom<Uint8Array>((val) => {
+const uInt8Schema: z.ZodType<Uint8Array> = z.custom<Uint8Array>((val: any) => {
   return val instanceof Uint8Array;
 });
 
@@ -126,6 +65,7 @@ const ElHeader32Schema = z.object({
    * Identifies the target operating system ABI
    */
   e_ident_osabi: int1,
+  e_ident_osabi_name: z.string(),
 
   /**
    * Further specifies the ABI version
@@ -141,11 +81,13 @@ const ElHeader32Schema = z.object({
    * Identifies object file type
    */
   e_type: int2,
+  e_type_name: z.string(),
 
   /**
    * Specifies target instruction set architecture
    */
   e_machine: int2,
+  e_machine_name: z.string(),
 
   /**
    * Set to 1 for the original version of ELF
@@ -222,12 +164,14 @@ const ElSectionHeader32SChema = z.object({
   /**
    * Identifies the type of this header.
    */
-  sh_type: int4, //TODO enum
+  sh_type: int4,
+  sh_type_name: z.string(),
 
   /**
    * Identifies the attributes of the section.
    */
-  sh_flags: int4, //TODO enum
+  sh_flags: int4,
+  p_flags_names: z.array(z.string()),
 
   /**
    * Virtual address of the section in memory, for sections that are loaded.
@@ -278,6 +222,7 @@ const ProgramHeader32Schema = z.object({
    * Identifies the type of the segment.
    */
   p_type: int4,
+  p_type_name: z.string(),
 
   /**
    * Offset of the segment in the file image.
@@ -310,6 +255,7 @@ const ProgramHeader32Schema = z.object({
    * Segment-dependent flags (position in file, logical address or otherwise).
    */
   p_flags: int4,
+  p_flags_names: z.array(z.string()),
 
   /**
    * 0 and 1 specify no alignment.
@@ -633,10 +579,13 @@ e000 0007 0000 0000 0000 0000 0000 0000
       _isLittleEndian: endian == 'little',
       e_ident_version: version,
       e_ident_osabi: abi,
+      e_ident_osabi_name: this._get_osabi_name(abi),
       e_ident_abiversion: abiVersion,
       e_ident_pad: padding,
       e_type: type,
+      e_type_name: this._get_elf_type_name(type),
       e_machine: machine,
+      e_machine_name: this._get_machine_isa_name(machine),
       e_version: version2,
       e_entry: entryPoint_e_entry,
       e_phoff: programHeaderTableStart_e_phoff,
@@ -738,7 +687,9 @@ e000 0007 0000 0000 0000 0000 0000 0000
         sh_name,
         _name: '',
         sh_type,
+        sh_type_name: this._get_section_header_type_name(sh_type),
         sh_flags,
+        p_flags_names: this._get_section_header_flag_names32(sh_flags),
         sh_addr,
         sh_offset,
         sh_size,
@@ -823,12 +774,14 @@ e000 0007 0000 0000 0000 0000 0000 0000
 
       const programHeader: ProgramHeader32 = {
         p_type,
+        p_type_name: this._get_program_header_type_name(p_type),
         p_offset,
         p_vaddr,
         p_paddr,
         p_filesz,
         p_memsz,
         p_flags,
+        p_flags_names: this._get_program_header_flag_names32(p_flags),
         p_align,
         sectionData,
       }
@@ -840,6 +793,263 @@ e000 0007 0000 0000 0000 0000 0000 0000
 
   }
 
+
+  public static _get_osabi_name(osabi: Int1): string {
+    switch (osabi) {
+      case 0x00: return 'System V'
+      case 0x01: return 'HP-UX'
+      case 0x02: return 'NetBSD'
+      case 0x03: return 'Linux'
+      case 0x04: return 'GNU Hurd'
+      case 0x06: return 'Solaris'
+      case 0x07: return 'AIX'
+      case 0x08: return 'IRIX'
+      case 0x09: return 'FreeBSD'
+      case 0x0A: return 'Tru64'
+      case 0x0B: return 'Novell Modesto'
+      case 0x0C: return 'OpenBSD'
+      case 0x0D: return 'OpenVMS'
+      case 0x0E: return 'NonStop Kernel'
+      case 0x0F: return 'AROS'
+      case 0x10: return 'Fenix OS'
+      case 0x11: return 'Nuxi CloudABI'
+      case 0x12: return 'Stratus Technologies OpenVOS'
+      default: return 'unknown'
+    }
+  }
+
+  public static _get_elf_type_name(type: Int2): string {
+
+    switch (type) {
+      case 0x00: return 'ET_NONE' + ' (unknown)'
+      case 0x01: return 'EL_REL' + ' (Relocatable file)'
+      case 0x02: return 'ET_EXEC' + ' (Executable file)'
+      case 0x03: return 'ET_DYN' + ' (Shared object file)'
+      case 0x04: return 'ET_CORE' + ' (Core file)'
+    }
+
+    //or a range?
+    if (type >= 0xFE00 && type <= 0xFEFF) {
+      return 'OS specific' + ' (Reserved inclusive range)' // ET_LOOS - ET_HIOS
+    }
+
+    if (type >= 0xFF00 && type <= 0xFFFF) {
+      return 'Processor specific' + ' (Reserved inclusive range.)' // ET_LOPROC - ET_HIPROC
+    }
+
+    return 'unknown'
+  }
+
+  //instruction set architecture
+  public static _get_machine_isa_name(type: Int2): string {
+
+    switch (type) {
+      case 0x00:	return 'No specific instruction set'
+      case 0x01:	return 'AT&T WE 32100'
+      case 0x02:	return 'SPARC'
+      case 0x03:	return 'x86'
+      case 0x04:	return 'Motorola 68000 (M68k)'
+      case 0x05:	return 'Motorola 88000 (M88k)'
+      case 0x06:	return 'Intel MCU'
+      case 0x07:	return 'Intel 80860'
+      case 0x08:	return 'MIPS'
+      case 0x09:	return 'IBM System/370'
+      case 0x0A:	return 'MIPS RS3000 Little-endian'
+      // case 0x0B-0x0E: return 'Reserved for future use'
+      case 0x0F:	return 'Hewlett-Packard PA-RISC'
+      case 0x13:	return 'Intel 80960'
+      case 0x14:	return 'PowerPC'
+      case 0x15:	return 'PowerPC (64-bit)'
+      case 0x16:	return 'S390, including S390x'
+      case 0x17:	return 'IBM SPU/SPC'
+      // case 0x18 - 0x23: return 'Reserved for future use'
+      case 0x24:	return 'NEC V800'
+      case 0x25:	return 'Fujitsu FR20'
+      case 0x26:	return 'TRW RH-32'
+      case 0x27:	return 'Motorola RCE'
+      case 0x28:	return 'Arm (up to Armv7/AArch32)'
+      case 0x29:	return 'Digital Alpha'
+      case 0x2A:	return 'SuperH'
+      case 0x2B:	return 'SPARC Version 9'
+      case 0x2C:	return 'Siemens TriCore embedded processor'
+      case 0x2D:	return 'Argonaut RISC Core'
+      case 0x2E:	return 'Hitachi H8/300'
+      case 0x2F:	return 'Hitachi H8/300H'
+      case 0x30:	return 'Hitachi H8S'
+      case 0x31:	return 'Hitachi H8/500'
+      case 0x32:	return 'IA-64'
+      case 0x33:	return 'Stanford MIPS-X'
+      case 0x34:	return 'Motorola ColdFire'
+      case 0x35:	return 'Motorola M68HC12'
+      case 0x36:	return 'Fujitsu MMA Multimedia Accelerator'
+      case 0x37:	return 'Siemens PCP'
+      case 0x38:	return 'Sony nCPU embedded RISC processor'
+      case 0x39:	return 'Denso NDR1 microprocessor'
+      case 0x3A:	return 'Motorola Star*Core processor'
+      case 0x3B:	return 'Toyota ME16 processor'
+      case 0x3C:	return 'STMicroelectronics ST100 processor'
+      case 0x3D:	return 'Advanced Logic Corp. TinyJ embedded processor family'
+      case 0x3E:	return 'AMD x86-64'
+      case 0x3F:	return 'Sony DSP Processor'
+      case 0x40:	return 'Digital Equipment Corp. PDP-10'
+      case 0x41:	return 'Digital Equipment Corp. PDP-11'
+      case 0x42:	return 'Siemens FX66 microcontroller'
+      case 0x43:	return 'STMicroelectronics ST9+ 8/16 bit microcontroller'
+      case 0x44:	return 'STMicroelectronics ST7 8-bit microcontroller'
+      case 0x45:	return 'Motorola MC68HC16 Microcontroller'
+      case 0x46:	return 'Motorola MC68HC11 Microcontroller'
+      case 0x47:	return 'Motorola MC68HC08 Microcontroller'
+      case 0x48:	return 'Motorola MC68HC05 Microcontroller'
+      case 0x49:	return 'Silicon Graphics SVx'
+      case 0x4A:	return 'STMicroelectronics ST19 8-bit microcontroller'
+      case 0x4B:	return 'Digital VAX'
+      case 0x4C:	return 'Axis Communications 32-bit embedded processor'
+      case 0x4D:	return 'Infineon Technologies 32-bit embedded processor'
+      case 0x4E:	return 'Element 14 64-bit DSP Processor'
+      case 0x4F:	return 'LSI Logic 16-bit DSP Processor'
+      case 0x8C:	return 'TMS320C6000 Family'
+      case 0xAF:	return 'MCST Elbrus e2k'
+      case 0xB7:	return 'Arm 64-bits (Armv8/AArch64)'
+      case 0xDC:	return 'Zilog Z80'
+      case 0xF3:	return 'RISC-V'
+      case 0xF7:	return 'Berkeley Packet Filter'
+      case 0x101:	return 'WDC 65C816'
+    }
+
+    if (type >= 0x0B && type <= 0x0E) {
+      return 'Reserved for future use'
+    }
+
+    if (type >= 0x18 && type <= 0x23) {
+      return 'Reserved for future use'
+    }
+
+    return 'unknown'
+  }
+
+  public static _get_section_header_type_name(type: Int4): string {
+
+    switch (type) {
+      case 0x0: return 'SHT_NULL' + ' (Section header table entry unused)'
+      case 0x1: return 'SHT_PROGBITS' + ' (Program data)'
+      case 0x2: return 'SHT_SYMTAB' + ' (Symbol table)'
+      case 0x3: return 'SHT_STRTAB' + ' (String table)'
+      case 0x4: return 'SHT_RELA' + ' (Relocation entries with addends)'
+      case 0x5: return 'SHT_HASH' + ' (Symbol hash table)'
+      case 0x6: return 'SHT_DYNAMIC' + ' (Dynamic linking information)'
+      case 0x7: return 'SHT_NOTE' + ' (Notes)'
+      case 0x8: return 'SHT_NOBITS' + ' (Program space with no data (bss))'
+      case 0x9: return 'SHT_REL' + ' (Relocation entries, no addends)'
+      case 0x0A: return 'SHT_SHLIB' + ' (Reserved)'
+      case 0x0B: return 'SHT_DYNSYM' + ' (Dynamic linker symbol table)'
+      case 0x0E: return 'SHT_INIT_ARRAY' + ' (Array of constructors)'
+      case 0x0F: return 'SHT_FINI_ARRAY' + ' (Array of destructors)'
+      case 0x10: return 'SHT_PREINIT_ARRAY' + ' (Array of pre-constructors)'
+      case 0x11: return 'SHT_GROUP' + ' (Section group)'
+      case 0x12: return 'SHT_SYMTAB_SHNDX' + ' (Extended section indices)'
+      case 0x13: return 'SHT_NUM' + ' (Number of defined types.)'
+    }
+
+    if (type >= 0x60000000) {
+      return 'SHT_LOOS' + ' (Start OS-specific.)'
+    }
+
+    return 'unknown'
+  }
+
+  public static _get_section_header_flag_names32(type: Int4): string[] {
+    //we can have multiple flags in one section header
+
+    const flags: string[] = []
+
+    if (type & 0x1) {
+      flags.push('SHF_WRITE' + ' (Writable)')
+    }
+    if (type & 0x2) {
+      flags.push('SHF_ALLOC' + ' (Occupies memory during execution)')
+    }
+    if (type & 0x4) {
+      flags.push('SHF_EXECINSTR' + ' (Executable)')
+    }
+    if (type & 0x10) {
+      flags.push('SHF_MERGE' + ' (Might be merged)')
+    }
+    if (type & 0x20) {
+      flags.push('SHF_STRINGS' + ' (Contains nul-terminated strings)')
+    }
+    if (type & 0x40) {
+      //'sh_info' contains SHT index
+      flags.push('SHF_INFO_LINK' + ' (`sh_info' + ' points to a `SHT' + '_DYNAMIC' + ' section)')
+    }
+    if (type & 0x80) {
+      flags.push('SHF_LINK_ORDER' + ' (Preserve order after combining)')
+    }
+    if (type & 0x100) {
+      flags.push('SHF_OS_NONCONFORMING' + ' (Non-standard OS specific handling required)')
+    }
+    if (type & 0x200) {
+      flags.push('SHF_GROUP' + ' (Section is member of a group)')
+    }
+    if (type & 0x400) {
+      flags.push('SHF_TLS' + ' (Section hold thread-local data)')
+    }
+    if (type & 0x0ff00000) {
+      flags.push('SHF_MASKOS' + ' (OS-specific)')
+    }
+    if (type & 0xf0000000) {
+      flags.push('SHF_MASKPROC' + ' (Processor-specific)')
+    }
+    if (type & 0x4000000) {
+      flags.push('SHF_ORDERED' + ' (Special ordering requirement (Solaris))')
+    }
+    if (type & 0x8000000) {
+      flags.push('SHF_EXCLUDE' + ' (Section is excluded unless referenced or allocated (Solaris))')
+    }
+
+    return flags
+  }
+
+  public static _get_program_header_type_name(type: Int4): string {
+
+    switch (type) {
+      case 0x00000000: return 'PT_NULL' + '(Program header table entry unused)'
+      case 0x00000001: return 'PT_LOAD' + '(Loadable segment)'
+      case 0x00000002: return 'PT_DYNAMIC' + '(Dynamic linking information)'
+      case 0x00000003: return 'PT_INTERP' + '(Interpreter information)'
+      case 0x00000004: return 'PT_NOTE' + '(Auxiliary information)'
+      case 0x00000005: return 'PT_SHLIB' + '(Reserved)'
+      case 0x00000006: return 'PT_PHDR' + '(Segment containing program header table itself)'
+      case 0x00000007: return 'PT_TLS' + '(Thread-Local Storage template)'
+    }
+
+    if (type >= 0x60000000 && type <= 0x6FFFFFFF) {
+      return '(Start of OS-specific)' //PT_LOOS - PT_HIOS
+    }
+
+    if (type >= 0x70000000 && type <= 0x7FFFFFFF) {
+      return '(Start of processor-specific)' //PT_LOPROC - PT_HIPROC
+    }
+
+    return 'unknown'
+  }
+
+  public static _get_program_header_flag_names32(type: Int4): string[] {
+    //we can have multiple flags in one program header
+
+    const flags: string[] = []
+
+    if (type & 0x1) {
+      flags.push('PF_X' + ' (Executable segment)')
+    }
+    if (type & 0x2) {
+      flags.push('PF_W' + ' (Writeable segment)')
+    }
+    if (type & 0x4) {
+      flags.push('PF_R' + ' (Readable segment)')
+    }
+
+    return flags
+  }
 
 }
 
