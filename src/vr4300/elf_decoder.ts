@@ -387,13 +387,13 @@ e000 0007 0000 0000 0000 0000 0000 0000
 
     const allInstrs = []
 
-    //TODO sw/lw not decoded correctly
     //sll r0 r0 0 --> nop
     // addiu with negative number not shown
     // addiu immediate wrong: 	addiu	$1, $1, %lo($.str) | addiu at,at,0x5c
 
     //byteOffset is required because section data is just a subarray of the original buffer (passed to decode)
     for (let i = 0; i < size; i++) {
+
       const instructionBytes = view.getUint32(i * 4 + programInstructionsEncoded.byteOffset, elfFile.header._isLittleEndian)
 
       const instr = decode_single_binary_instructions(instructionBytes)

@@ -1289,7 +1289,7 @@ export function decode_single_binary_instructions(instr_line: int32) {
   //format: opcode, rs, rt, rd, sa, function
 
   //op code has 6 bits
-  const opcode = instr_line >> 26;
+  const opcode = instr_line >>> 26;
 
 
   //all branch & with offset or coprocoessor instructions
@@ -1414,10 +1414,10 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
   //last 6 bits are function (e.g. ADD)
   const func = instr & 0b111111;
 
-  const rs = (instr >> 21) & 0b11111; //5 bits, 25-21
-  const rt = (instr >> 16) & 0b11111; //5 bits, 20-16
-  const rd = (instr >> 11) & 0b11111; //5 bits, 15-11
-  const sa = (instr >> 6) & 0b11111; //5 bits, 10-6
+  const rs = (instr >>> 21) & 0b11111; //5 bits, 25-21
+  const rt = (instr >>> 16) & 0b11111; //5 bits, 20-16
+  const rd = (instr >>> 11) & 0b11111; //5 bits, 15-11
+  const sa = (instr >>> 6) & 0b11111; //5 bits, 10-6
 
   //TODO sort like in the manual
 
@@ -1970,7 +1970,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
     }
     case 0b001100: {
       //code is bits 25-6 (20 bits)
-      const code = (instr >> 6) & 0b11111111111111111111;
+      const code = (instr >>> 6) & 0b11111111111111111111;
       //SYSCALL
       const sync_instr: Syscall_Instruction = {
         original: instr,
@@ -1987,7 +1987,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
     }
     case 0b110100: {
       //code is bits 15-6 (10 bits)
-      const code = (instr >> 6) & 0b1111111111;
+      const code = (instr >>> 6) & 0b1111111111;
       //TEQ
       const teq_instr: Teq_Instruction = {
         original: instr,
@@ -2004,7 +2004,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
     }
     case 0b110000: {
       //code is bits 15-6 (10 bits)
-      const code = (instr >> 6) & 0b1111111111;
+      const code = (instr >>> 6) & 0b1111111111;
       //TGE
       const tge_instr: Tge_Instruction = {
         original: instr,
@@ -2021,7 +2021,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
     }
     case 0b110001: {
       //code is bits 15-6 (10 bits)
-      const code = (instr >> 6) & 0b1111111111;
+      const code = (instr >>> 6) & 0b1111111111;
       //TGEU
       const tgeu_instr: Tgeu_Instruction = {
         original: instr,
@@ -2038,7 +2038,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
     }
     case 0b110010: {
       //code is bits 15-6 (10 bits)
-      const code = (instr >> 6) & 0b1111111111;
+      const code = (instr >>> 6) & 0b1111111111;
       //TLT
       const tlt_instr: Tlt_Instruction = {
         original: instr,
@@ -2055,7 +2055,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
     }
     case 0b110011: {
       //code is bits 15-6 (10 bits)
-      const code = (instr >> 6) & 0b1111111111;
+      const code = (instr >>> 6) & 0b1111111111;
       //TLTU
       const tltu_instr: Tltu_Instruction = {
         original: instr,
@@ -2072,7 +2072,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
     }
     case 0b110110: {
       //code is bits 15-6 (10 bits)
-      const code = (instr >> 6) & 0b1111111111;
+      const code = (instr >>> 6) & 0b1111111111;
       //TNE
       const tne_instr: Tne_Instruction = {
         original: instr,
@@ -2123,11 +2123,11 @@ function _decode_single_i_type_instr(instr: int32): I_Type_Instruction | Reserve
   //I-Type (ADDI, ADDIU, ANDI, BEQ, BGEZ, BGEZAL, BGEZALL, BGEZL, BGTZ, BLEZ, BLTZ, BLTZAL, BLTZALL, BLTZL, BNE, LB, LBU, LH, LHU, LUI, LW, ORI, SB, SH, SLTI, SLTIU, SW, XORI)
 
   //first 6 bits are opcode (e.g. ADDI)
-  const opcode = instr >> 26;
+  const opcode = instr >>> 26;
 
-  const rs = (instr >> 21) & 0b11111; //5 bits, 25-21
-  const rt = (instr >> 16) & 0b11111; //5 bits, 20-16
-  let immediate = (instr >> 0) & 0b1111111111111111; //16 bits, 15-0
+  const rs = (instr >>> 21) & 0b11111; //5 bits, 25-21
+  const rt = (instr >>> 16) & 0b11111; //5 bits, 20-16
+  let immediate = (instr >>> 0) & 0b1111111111111111; //16 bits, 15-0
 
   const immediate_negative = (immediate & 0b1000000000000000) !== 0;
   if (immediate_negative) {
@@ -2278,11 +2278,11 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
   //I-Type (ADDI, ADDIU, ANDI, BEQ, BGEZ, BGEZAL, BGEZALL, BGEZL, BGTZ, BLEZ, BLTZ, BLTZAL, BLTZALL, BLTZL, BNE, LB, LBU, LH, LHU, LUI, LW, ORI, SB, SH, SLTI, SLTIU, SW, XORI)
 
   //first 6 bits are opcode (e.g. ADDI)
-  const opcode = instr >> 26;
+  const opcode = instr >>> 26;
 
-  const base = (instr >> 21) & 0b11111; //5 bits, 25-21
-  const rt = (instr >> 16) & 0b11111; //5 bits, 20-16
-  const offset = (instr >> 0) & 0b1111111111111111; //16 bits, 15-0
+  const base = (instr >>> 21) & 0b11111; //5 bits, 25-21
+  const rt = (instr >>> 16) & 0b11111; //5 bits, 20-16
+  const offset = (instr >>> 0) & 0b1111111111111111; //16 bits, 15-0
 
   switch (opcode) {
     case 0b011010: {
@@ -2696,11 +2696,11 @@ function _decode_single_i_type_branch_instr(instr: int32): I_Type_Branch_Instruc
   //I-Type (ADDI, ADDIU, ANDI, BEQ, BGEZ, BGEZAL, BGEZALL, BGEZL, BGTZ, BLEZ, BLTZ, BLTZAL, BLTZALL, BLTZL, BNE, LB, LBU, LH, LHU, LUI, LW, ORI, SB, SH, SLTI, SLTIU, SW, XORI)
 
   //first 6 bits are opcode (e.g. ADDI)
-  const opcode = instr >> 26;
+  const opcode = instr >>> 26;
 
-  const rs = (instr >> 21) & 0b11111; //5 bits, 25-21
-  const rt = (instr >> 16) & 0b11111; //5 bits, 20-16
-  const offset = (instr >> 0) & 0b1111111111111111; //16 bits, 15-0
+  const rs = (instr >>> 21) & 0b11111; //5 bits, 25-21
+  const rt = (instr >>> 16) & 0b11111; //5 bits, 20-16
+  const offset = (instr >>> 0) & 0b1111111111111111; //16 bits, 15-0
 
   switch (opcode) {
     case 0b000100: {
@@ -2818,11 +2818,11 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
   //I-Type (ADDI, ADDIU, ANDI, BEQ, BGEZ, BGEZAL, BGEZALL, BGEZL, BGTZ, BLEZ, BLTZ, BLTZAL, BLTZALL, BLTZL, BNE, LB, LBU, LH, LHU, LUI, LW, ORI, SB, SH, SLTI, SLTIU, SW, XORI)
 
   //first 6 bits are opcode (e.g. ADDI)
-  const opcode = instr >> 26; //000001
+  const opcode = instr >>> 26; //000001
 
-  const rs = (instr >> 21) & 0b11111; //5 bits, 25-21
-  const subOp = (instr >> 16) & 0b11111; //5 bits, 20-16
-  let immediate = (instr >> 0) & 0b1111111111111111; //16 bits, 15-0
+  const rs = (instr >>> 21) & 0b11111; //5 bits, 25-21
+  const subOp = (instr >>> 16) & 0b11111; //5 bits, 20-16
+  let immediate = (instr >>> 0) & 0b1111111111111111; //16 bits, 15-0
 
   //TODO offset ?? negative
 
@@ -3019,7 +3019,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
 function _decode_single_j_type_instr(instr: int32): J_Type_Instruction | Reserved_Instruction {
 
   //first 6 bits are opcode (e.g. ADDI)
-  const opcode = instr >> 26;
+  const opcode = instr >>> 26;
 
   //J-Type (J, JAL)
   const target = instr & 0b11111111111111111111111111; //26 bits, 25-0
@@ -3068,10 +3068,10 @@ function _decode_coprocessor_type_instr(instr: int32):
   | Reserved_Instruction {
 
   //first 6 bits are opcode (e.g. ADDI)
-  const opcode = instr >> 26;
-  const coprocessorSubOpCode = (instr >> 21) & 0b11111; //5 bits, 25-21
+  const opcode = instr >>> 26;
+  const coprocessorSubOpCode = (instr >>> 21) & 0b11111; //5 bits, 25-21
 
-  const isTlbInstr = (instr >> 25) & 0b1; //1 bit, 25
+  const isTlbInstr = (instr >>> 25) & 0b1; //1 bit, 25
 
   if (isTlbInstr === 1) {
     //tlb instruction
@@ -3137,8 +3137,8 @@ function _decode_coprocessor_type_instr(instr: int32):
 
     case 0b00000: {
       //MFCz
-      const rt = (instr >> 16) & 0b11111 //5 bits, 20-16
-      const rd = (instr >> 11) & 0b11111 //5 bits, 15-11
+      const rt = (instr >>> 16) & 0b11111 //5 bits, 20-16
+      const rd = (instr >>> 11) & 0b11111 //5 bits, 15-11
 
       switch (opcode) {
         case 0b010000: { //coprocessor 0
@@ -3187,8 +3187,8 @@ function _decode_coprocessor_type_instr(instr: int32):
     case 0b00001: {
       //DMFCz
 
-      const rt = (instr >> 16) & 0b11111 //5 bits, 20-16
-      const rd_or_fs = (instr >> 11) & 0b11111 //5 bits, 15-11
+      const rt = (instr >>> 16) & 0b11111 //5 bits, 20-16
+      const rd_or_fs = (instr >>> 11) & 0b11111 //5 bits, 15-11
 
       switch (opcode) {
         case 0b010000: { //coprocessor 0
@@ -3224,8 +3224,8 @@ function _decode_coprocessor_type_instr(instr: int32):
     case 0b00010: {
       //CFCz
 
-      const rt = (instr >> 16) & 0b11111 //5 bits, 20-16
-      const rd_or_fs = (instr >> 11) & 0b11111 //5 bits, 15-11
+      const rt = (instr >>> 16) & 0b11111 //5 bits, 20-16
+      const rd_or_fs = (instr >>> 11) & 0b11111 //5 bits, 15-11
 
       switch (opcode) {
         case 0b010001: { //coprocessor 1
@@ -3260,8 +3260,8 @@ function _decode_coprocessor_type_instr(instr: int32):
 
     case 0b00100: {
       //MTCz
-      const rt = (instr >> 16) & 0b11111 //5 bits, 20-16
-      const rd_or_fs = (instr >> 11) & 0b11111 //5 bits, 15-11
+      const rt = (instr >>> 16) & 0b11111 //5 bits, 20-16
+      const rd_or_fs = (instr >>> 11) & 0b11111 //5 bits, 15-11
 
       switch (opcode) {
         case 0b010000: { //coprocessor 0
@@ -3310,8 +3310,8 @@ function _decode_coprocessor_type_instr(instr: int32):
     case 0b00101: {
       //DMTCz
 
-      const rt = (instr >> 16) & 0b11111 //5 bits, 20-16
-      const rd_or_fs = (instr >> 11) & 0b11111 //5 bits, 15-11
+      const rt = (instr >>> 16) & 0b11111 //5 bits, 20-16
+      const rd_or_fs = (instr >>> 11) & 0b11111 //5 bits, 15-11
 
       switch (opcode) {
         case 0b010000: { //coprocessor 0
@@ -3346,8 +3346,8 @@ function _decode_coprocessor_type_instr(instr: int32):
 
     case 0b00110: {
       //CTCz
-      const rt = (instr >> 16) & 0b11111 //5 bits, 20-16
-      const rd_or_fs = (instr >> 11) & 0b11111 //5 bits, 15-11
+      const rt = (instr >>> 16) & 0b11111 //5 bits, 20-16
+      const rd_or_fs = (instr >>> 11) & 0b11111 //5 bits, 15-11
 
       switch (opcode) {
         case 0b010001: { //coprocessor 1
@@ -3383,8 +3383,8 @@ function _decode_coprocessor_type_instr(instr: int32):
     case 0b01000: {
       //some branch with condition
 
-      const branchCondition = (instr >> 16) & 0b11111; //5 bits, 20-16
-      const offset = (instr >> 0) & 0b1111111111111111; //16 bits, 15-0
+      const branchCondition = (instr >>> 16) & 0b11111; //5 bits, 20-16
+      const offset = (instr >>> 0) & 0b1111111111111111; //16 bits, 15-0
 
       switch (branchCondition) {
         case 0b00000: {
