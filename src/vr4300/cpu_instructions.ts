@@ -1815,6 +1815,10 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
       return or_instr
     }
     case 0b000000: {
+
+      //a NOP is actually implemented as "sll r0 r0 0"
+      const isNop = (rt & rd & sa) === 0;
+
       //SLL
       const sll_instr: Sll_Instruction = {
         original: instr,
@@ -1824,7 +1828,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
         rd,
         sa,
         func,
-        debug_view: `sll ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${sa}`
+        debug_view: isNop ? `_nop` : `sll ${register_debug_view_prefix}${rd}, ${register_debug_view_prefix}${rt}, ${sa}`
       }
       return sll_instr
     }

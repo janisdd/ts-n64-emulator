@@ -1,5 +1,5 @@
 
-asm(".set noreorder");
+// asm(".set noreorder");
 
 int main() {
   int i = 2;

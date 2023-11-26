@@ -1,5 +1,6 @@
 import {z} from "zod";
 import {decode_single_binary_instructions} from './cpu_instructions'
+import fs from 'fs'
 
 
 //see https://en.wikipedia.org/wiki/Executable_and_Linkable_Format
@@ -275,7 +276,7 @@ const ElfFileSchema = z.object({
   programHeaders: z.array(ProgramHeader32Schema),
 })
 
-type ElfFile = z.infer<typeof ElfFileSchema>
+export type ElfFile = z.infer<typeof ElfFileSchema>
 
 
 class Elf_decoder {
@@ -299,10 +300,10 @@ class Elf_decoder {
      */
     const _test = `7f45 4c46 0102 0100 0000 0000 0000 0000
 0001 0008 0000 0001 0000 0000 0000 0000
-0000 0240 5000 1005 0034 0000 0000 0028
+0000 0240 2000 1105 0034 0000 0000 0028
 0010 0001 0000 0000 0000 0000 0000 0000
 27bd ffe0 afbf 001c afbe 0018 03a0 f025
-afc0 0014 2401 0002 af23 2323 8fc1 0010
+afc0 0014 2401 0002 afc1 0010 8fc1 0010
 0001 0840 afc1 000c 3c01 0000 2421 0000
 afc1 0008 3c01 0000 2421 0000 afc1 0004
 2402 0005 03c0 e825 8fbe 0018 8fbf 001c
@@ -313,7 +314,7 @@ c000 0000 ffff fffc 0000 0000 0000 0000
 0048 6f6d 6562 7265 7720 636c 616e 6720
 7665 7273 696f 6e20 3137 2e30 2e34 0000
 e000 0007 0000 0000 0000 0000 0000 0000
-0000 0000 0000 0000 0000 2001 0101 0005
+0000 0000 0000 0000 0000 0300 0201 0005
 0000 0000 0000 0000 0000 0000 0000 0000
 0000 0000 0000 0000 0000 0000 0000 0000
 0000 0063 0000 0000 0000 0000 0400 fff1
@@ -372,12 +373,18 @@ e000 0007 0000 0000 0000 0000 0000 0000
 0000 0198 0000 0000 0000 000f 0000 0000
 0000 0001 0000 0000 0000 0072 0000 0002
 0000 0000 0000 0000 0000 0120 0000 0050
-0000 0001 0000 0004 0000 0004 0000 0010`
+0000 0001 0000 0004 0000 0004 0000 0010
+`
 
     const bytes = _test.split(/[ \n]/gm).map(p => [p.substring(0, 2), p.substring(2)]).flat().map((x) => parseInt(x, 16))
-    const buffer = new Uint8Array(bytes)
+    // const buffer = new Uint8Array(bytes)
+
+    const buffer = fs.readFileSync(`../../mips_examples/main.o2`)
 
     const elfFile = this.decode(buffer)
+
+    const _debug_info = this._get_elf_dump(elfFile)
+    console.log(_debug_info)
 
     const programInstructionsEncoded = elfFile.sectionHeaders.find(p => p._name === '.text')!.sectionData
 
@@ -395,6 +402,10 @@ e000 0007 0000 0000 0000 0000 0000 0000
     for (let i = 0; i < size; i++) {
 
       const instructionBytes = view.getUint32(i * 4 + programInstructionsEncoded.byteOffset, elfFile.header._isLittleEndian)
+
+      if (i == 10) {
+        console.log()
+      }
 
       const instr = decode_single_binary_instructions(instructionBytes)
       allInstrs.push(instr)
@@ -1012,14 +1023,14 @@ e000 0007 0000 0000 0000 0000 0000 0000
   public static _get_program_header_type_name(type: Int4): string {
 
     switch (type) {
-      case 0x00000000: return 'PT_NULL' + '(Program header table entry unused)'
-      case 0x00000001: return 'PT_LOAD' + '(Loadable segment)'
-      case 0x00000002: return 'PT_DYNAMIC' + '(Dynamic linking information)'
-      case 0x00000003: return 'PT_INTERP' + '(Interpreter information)'
-      case 0x00000004: return 'PT_NOTE' + '(Auxiliary information)'
-      case 0x00000005: return 'PT_SHLIB' + '(Reserved)'
-      case 0x00000006: return 'PT_PHDR' + '(Segment containing program header table itself)'
-      case 0x00000007: return 'PT_TLS' + '(Thread-Local Storage template)'
+      case 0x00000000: return 'PT_NULL' + ' (Program header table entry unused)'
+      case 0x00000001: return 'PT_LOAD' + ' (Loadable segment)'
+      case 0x00000002: return 'PT_DYNAMIC' + ' (Dynamic linking information)'
+      case 0x00000003: return 'PT_INTERP' + ' (Interpreter information)'
+      case 0x00000004: return 'PT_NOTE' + ' (Auxiliary information)'
+      case 0x00000005: return 'PT_SHLIB' + ' (Reserved)'
+      case 0x00000006: return 'PT_PHDR' + ' (Segment containing program header table itself)'
+      case 0x00000007: return 'PT_TLS' + ' (Thread-Local Storage template)'
     }
 
     if (type >= 0x60000000 && type <= 0x6FFFFFFF) {
@@ -1049,6 +1060,53 @@ e000 0007 0000 0000 0000 0000 0000 0000
     }
 
     return flags
+  }
+
+
+  //used to get an output similar to https://upload.wikimedia.org/wikipedia/commons/e/e4/ELF_Executable_and_Linkable_Format_diagram_by_Ange_Albertini.png
+  public static _get_elf_dump(elfFile: ElfFile): string {
+
+    let output:string[] = []
+
+    output.push(`--- ELF Header ---`)
+    output.push(`e_ident_ei_class\t${elfFile.header.e_ident_class}\t\t${elfFile.header._is32bit ? '32bit' : '64bit'}`)
+    output.push(`e_ident_ei_data\t\t${elfFile.header.e_ident_data}\t\t${elfFile.header._isLittleEndian ? 'little endian' : 'big endian'}`)
+    output.push(`e_ident_ei_version\t${elfFile.header.e_ident_version}\t\t${elfFile.header.e_ident_version}`)
+    output.push(`e_type\t\t\t${elfFile.header.e_type}\t\t${elfFile.header.e_type_name}`)
+    output.push(`e_machine\t\t${elfFile.header.e_machine}\t\t${elfFile.header.e_machine_name}`)
+    output.push(`e_version\t\t${elfFile.header.e_version}\t\t${elfFile.header.e_version}`)
+    output.push(`e_entry\t\t\t0x${elfFile.header.e_entry.toString(16)}\taddress where the execution starts`)
+    output.push(`e_phoff\t\t\t0x${elfFile.header.e_phoff.toString(16)}\t\tprogram headers' offset in the file`)
+    output.push(`e_shoff\t\t\t0x${elfFile.header.e_shoff.toString(16)}\t\tsection headers' offset in the file`)
+    output.push(`e_ehsize\t\t${elfFile.header.e_ehsize}\t\tELF header's size in bytes`)
+    output.push(`e_phentsize\t\t${elfFile.header.e_phentsize}\t\tsize of a single program header entry in bytes`)
+    output.push(`e_phnum\t\t\t${elfFile.header.e_phnum}\t\tcount of program header entires`)
+    output.push(`e_shentsize\t\t${elfFile.header.e_shentsize}\t\tsize of a single section header entry in bytes`)
+    output.push(`e_shnum\t\t\t${elfFile.header.e_shnum}\t\tcount of section header entries`)
+    output.push(`e_shstrndx\t\t${elfFile.header.e_shstrndx}\t\tindex of the section header entry that contains the section names`)
+
+    output.push(``)
+    output.push(`--- Program Header Table ---`)
+    for (let i = 0; i < elfFile.programHeaders.length; i++) {
+      const programHeader = elfFile.programHeaders[i]
+
+      output.push(`${i+1}. Program Header Table Entry`)
+      output.push(`p_type\t\t${programHeader.p_type}\t\t${programHeader.p_type_name}`)
+      //TODO only when loaded?
+      output.push(`p_offset\t0x${programHeader.p_offset.toString(16)}\t\toffset in the file where to start reading the segment`)
+      output.push(` _end\t\t0x${(programHeader.p_offset + programHeader.p_filesz).toString(16)}\t\tthe end of the segment in the file`)
+      output.push(`p_vaddr\t\t0x${programHeader.p_vaddr.toString(16)}\tvirtual address where it should be loaded`)
+      output.push(`p_paddr\t\t0x${programHeader.p_paddr.toString(16)}\tphysical address where it should be loaded`)
+      output.push(`p_filesz\t${programHeader.p_filesz}\t\tsize in bytes of the file image of the segment`)
+      output.push(`p_memsz\t\t${programHeader.p_memsz}\t\tsize in bytes of the memory image of the segment`)
+      output.push(`p_flags\t\t${programHeader.p_flags}\t\t${programHeader.p_flags_names.join(', ')}`)
+      let align_description = programHeader.p_align === 0 || programHeader.p_align === 1 ? 'no alignment' : `alignment constraint of the segment in memory and in the file`
+      output.push(`p_align\t\t${programHeader.p_align}\t\t${align_description}`)
+      output.push(``)
+    }
+
+    return output.join('\n')
+
   }
 
 }

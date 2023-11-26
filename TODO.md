@@ -148,6 +148,8 @@ cross compile with clang:
 - open `/usr/local/Caskroom/ghidra/10.4-20230928/ghidra_10.4_PUBLIC/Ghidra/Features/Decompiler/os/mac_x86_64/decompiler` to get os permission
 - run with `/usr/local/bin/ghidraRun`
 
+`_nop` means instruction is in the delay slot (https://github.com/NationalSecurityAgency/ghidra/issues/819)
+
 useful links
 
 - https://ultra64.ca/resources/documentation
@@ -180,11 +182,17 @@ Pseudo instructions?
 
 - ELF format (Executable and Linkable Format binary file on unix)
   - https://en.wikipedia.org/wiki/Executable_and_Linkable_Format
+  - https://wiki.osdev.org/ELF
   - sections: https://refspecs.linuxbase.org/elf/gabi4+/ch4.sheader.html
 
 - https://github.com/compilepeace/BINARY_DISSECTION_COURSE --> explains ELF in detail
 
-- cross compilation examples: https://noobient.com/2020/12/22/mips-cross-compilation-crash-course/
+- cross compilation examples: 
+  - https://noobient.com/2020/12/22/mips-cross-compilation-crash-course/
+  - https://mcilloni.ovh/2021/02/09/cxx-cross-clang/
+  - https://stackoverflow.com/questions/4751709/cross-compiling-for-mips-router-from-x86 -->  https://github.com/dockcross/dockcross
+
+sysroot: https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/mips/mipsel-linux-android-4.4.3/+/373d8e9f24e73a7a5507f2cb668b2b50ab8f27a3/sysroot?autodive=0
 
 - https://stackoverflow.com/questions/57924712/inspect-and-get-binary-from-elf-file-on-macos
 - https://en.wikipedia.org/wiki/Objdump
