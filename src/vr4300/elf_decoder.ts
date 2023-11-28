@@ -34,6 +34,21 @@ type Cursor = {
   offset: number
 }
 
+export enum ProgramHeaderEntryType {
+PT_NULL = 0x00000000, //		Program header table entry unused.
+PT_LOAD = 0x00000001, //		Loadable segment.
+PT_DYNAMIC = 0x00000002, //		Dynamic linking information.
+PT_INTERP = 0x00000003, //		Interpreter information.
+PT_NOTE = 0x00000004, //		Auxiliary information.
+PT_SHLIB = 0x00000005, //		Reserved.
+PT_PHDR = 0x00000006, //		Segment containing program header table itself.
+PT_TLS = 0x00000007, //		Thread-Local Storage template.
+// 0x60000000	PT_LOOS	Reserved inclusive range. Operating system specific.
+// 0x6FFFFFFF	PT_HIOS
+// 0x70000000	PT_LOPROC	Reserved inclusive range. Processor specific.
+// 0x7FFFFFFF	PT_HIPROC
+}
+
 const uInt8Schema: z.ZodType<Uint8Array> = z.custom<Uint8Array>((val: any) => {
   return val instanceof Uint8Array;
 });
@@ -221,6 +236,7 @@ type ElSectionHeader32 = z.infer<typeof ElSectionHeader32SChema>
 const ProgramHeader32Schema = z.object({
   /**
    * Identifies the type of the segment.
+   * {@link ProgramHeaderEntryType}
    */
   p_type: int4,
   p_type_name: z.string(),
@@ -264,7 +280,7 @@ const ProgramHeader32Schema = z.object({
    */
   p_align: int4,
 
-  sectionData: uInt8Schema,
+  segmentData: uInt8Schema,
 })
 
 type ProgramHeader32 = z.infer<typeof ProgramHeader32Schema>
@@ -279,7 +295,7 @@ const ElfFileSchema = z.object({
 export type ElfFile = z.infer<typeof ElfFileSchema>
 
 
-class Elf_decoder {
+export class Elf_decoder {
   private constructor() {
   }
 
@@ -777,10 +793,10 @@ e000 0007 0000 0000 0000 0000 0000 0000
       const p_align = view.getUint32(offset + cursor2, isLittleEndian)
       cursor2 += 4
 
-      let sectionData = new Uint8Array(0)
+      let segmentData = new Uint8Array(0)
 
       if (p_filesz > 0) {
-        sectionData = binary.subarray(p_offset, p_offset + p_filesz)
+        segmentData = binary.subarray(p_offset, p_offset + p_filesz)
       }
 
       const programHeader: ProgramHeader32 = {
@@ -794,7 +810,7 @@ e000 0007 0000 0000 0000 0000 0000 0000
         p_flags,
         p_flags_names: this._get_program_header_flag_names32(p_flags),
         p_align,
-        sectionData,
+        segmentData,
       }
 
       allProgramHeaders.push(programHeader)
@@ -1111,4 +1127,4 @@ e000 0007 0000 0000 0000 0000 0000 0000
 
 }
 
-Elf_decoder._test()
+// Elf_decoder._test()
