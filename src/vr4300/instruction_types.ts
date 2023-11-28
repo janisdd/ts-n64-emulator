@@ -2,6 +2,7 @@ export type int32 = number
 export type int64 = number
 export type float = number
 export type float64 = number
+export type float32 = number
 
 export type int26 = number // 26 bits
 export type int20 = number // 20 bits
@@ -530,6 +531,55 @@ export interface Xor_Instruction extends R_Type_Instruction {
   func: FuncInstr.xor
 }
 
+export type Some_R_Type_Instruction =
+  | Add_Instruction
+  | Addu_Instruction
+  | And_Instruction
+  | Dadd_Instruction
+  | Daddu_Instruction
+  | Ddiv_Instruction
+  | Ddivu_Instruction
+  | Div_Instruction
+  | Divu_Instruction
+  | Dmult_Instruction
+  | Dmultu_Instruction
+  | Dsll_Instruction
+  | Dsllv_Instruction
+  | Dsll32_Instruction
+  | Dsra_Instruction
+  | Dsrav_Instruction
+  | Dsra32_Instruction
+  | Dsrl_Instruction
+  | Dsrlv_Instruction
+  | Dsrl32_Instruction
+  | Dsub_Instruction
+  | Dsubu_Instruction
+  | Jalr_Instruction
+  | Jr_Instruction
+  | Mult_Instruction
+  | Multu_Instruction
+  | Nor_Instruction
+  | Or_Instruction
+  | Sll_Instruction
+  | Sllv_Instruction
+  | Slt_Instruction
+  | Sltu_Instruction
+  | Sra_Instruction
+  | Srav_Instruction
+  | Srl_Instruction
+  | Srlv_Instruction
+  | Sub_Instruction
+  | Subu_Instruction
+  | Sync_Instruction
+  | Syscall_Instruction
+  | Teq_Instruction
+  | Tge_Instruction
+  | Tgeu_Instruction
+  | Tlt_Instruction
+  | Tltu_Instruction
+  | Tne_Instruction
+  | Xor_Instruction
+
 //--- END op code: special, R_Type_Instruction ---
 
 
@@ -563,6 +613,14 @@ export interface Teqi_Instruction extends I_Type_Regimm_Immediate_Instruction {
 export interface Tnei_Instruction extends I_Type_Regimm_Immediate_Instruction {
   subOp: RegimmInstr.tnei
 }
+
+export type Some_I_Type_Regimm_Immediate_Instruction =
+  | Tgei_Instruction
+  | Tgeiu_Instruction
+  | Tlti_Instruction
+  | Tltiu_Instruction
+  | Teqi_Instruction
+  | Tnei_Instruction
 
 export interface I_Type_Regimm_Offset_Instruction extends Instruction {
   op: OpInstr.regimm
@@ -602,6 +660,16 @@ export interface Bltzall_Instruction extends I_Type_Regimm_Offset_Instruction {
 export interface Bgezall_Instruction extends I_Type_Regimm_Offset_Instruction {
   subOp: RegimmInstr.bgezall
 }
+
+export type Some_I_Type_Regimm_Instruction =
+  | Bltz_Instruction
+  | Bgez_Instruction
+  | Bltzl_Instruction
+  | Bgezl_Instruction
+  | Bltzal_Instruction
+  | Bgezal_Instruction
+  | Bltzall_Instruction
+  | Bgezall_Instruction
 
 
 export interface I_Type_Branch_Instruction extends Instruction {
@@ -647,6 +715,15 @@ export interface Bgtzl_Instruction extends I_Type_Branch_Instruction {
   rt: 0
 }
 
+export type Some_I_Type_Branch_Instruction =
+  | Beq_Instruction
+  | Bne_Instruction
+  | Blez_Instruction
+  | Bgtz_Instruction
+  | Beql_Instruction
+  | Bnel_Instruction
+  | Blezl_Instruction
+  | Bgtzl_Instruction
 
 /**
  * immediate
@@ -698,6 +775,18 @@ export interface Daddi_Instruction extends I_Type_Instruction {
 export interface Daddiu_Instruction extends I_Type_Instruction {
   op: OpInstr.daddiu
 }
+
+export type Some_I_Type_Instruction =
+  | Addi_Instruction
+  | Addiu_Instruction
+  | Slti_Instruction
+  | Sltiu_Instruction
+  | Andi_Instruction
+  | Ori_Instruction
+  | Xori_Instruction
+  | Lui_Instruction
+  | Daddi_Instruction
+  | Daddiu_Instruction
 
 
 export interface I_Type_Offset_Instruction extends Instruction {
@@ -799,13 +888,46 @@ export interface Sd_Instruction extends I_Type_Offset_Instruction {
   op: OpInstr.sd
 }
 
-export interface I_Type_Float_Offset_Instruction extends Instruction {
-  op: OpInstr
-  coprocessor: 1 | 2
-  base: int5
-  rt: int5
-  offset: int16
-}
+export type Some_I_Type_Offset_Instruction =
+  | Ldl_Instruction
+  | Ldr_Instruction
+  | Lb_Instruction
+  | Lh_Instruction
+  | Lwl_Instruction
+  | Lw_Instruction
+  | Lbu_Instruction
+  | Lhu_Instruction
+  | Lwr_Instruction
+  | Lwu_Instruction
+  | Sb_Instruction
+  | Sh_Instruction
+  | Swl_Instruction
+  | Sw_Instruction
+  | Sdl_Instruction
+  | Sdr_Instruction
+  | Swr_Instruction
+  | Ll_Instruction
+  | Lld_Instruction
+  | Ld_Instruction
+  | Sc_Instruction
+  | Scd_Instruction
+  | Sd_Instruction
+  | Ldc1_Instruction
+  | Ldc2_Instruction
+  | Lwc1_Instruction
+  | Lwc2_Instruction
+  | Sdc1_Instruction
+  | Sdc2_Instruction
+  | Swc1_Instruction
+  | Swc2_Instruction
+
+// export interface I_Type_Float_Offset_Instruction extends Instruction {
+//   op: OpInstr
+//   coprocessor: 1 | 2
+//   base: int5
+//   rt: int5
+//   offset: int16
+// }
 
 export interface Ldc1_Instruction extends I_Type_Offset_Instruction {
   op: OpInstr.ldc1
@@ -953,6 +1075,20 @@ export interface Bc2tl_Instruction extends Branch_Coprocessor_Instruction {
   branchCondition: BranchConditionCode.bctl
 }
 
+export type Some_Branch_Coprocessor_Instruction =
+  | Bc0f_Instruction
+  | Bc1f_Instruction
+  | Bc2f_Instruction
+  | Bc0fl_Instruction
+  | Bc1fl_Instruction
+  | Bc2fl_Instruction
+  | Bc0t_Instruction
+  | Bc1t_Instruction
+  | Bc2t_Instruction
+  | Bc0tl_Instruction
+  | Bc1tl_Instruction
+  | Bc2tl_Instruction
+
 
 //COPz rs
 
@@ -983,6 +1119,10 @@ export interface Mfc2_Instruction extends MfcZ_Instruction {
   subOpCode: CoprocessorSubOpCode.mf
 }
 
+export type Some_MfcZ_Instruction =
+  | Mfc0_Instruction
+  | Mfc1_Instruction
+  | Mfc2_Instruction
 
 export interface Dmfc0_Instruction extends Instruction {
   op: OpInstr.coprocessor0_func
@@ -1002,15 +1142,9 @@ export interface Dmfc1_Instruction extends Instruction {
   rest: 0
 }
 
-export interface Dmfc1_Instruction extends Instruction {
-  op: OpInstr.coprocessor1_func
-  coprocessor: 1
-  subOpCode: CoprocessorSubOpCode.dmf
-  rt: int5
-  fs: int5
-  rest: 0
-}
-
+export type Some_Dmfc_Instruction =
+  | Dmfc0_Instruction
+  | Dmfc1_Instruction
 
 export interface Dmtc0_Instruction extends Instruction {
   op: OpInstr.coprocessor0_func
@@ -1030,6 +1164,9 @@ export interface Dmtc1_Instruction extends Instruction {
   rest: 0
 }
 
+export type Some_Dmtc_Instruction =
+  | Dmtc0_Instruction
+  | Dmtc1_Instruction
 
 export interface Cfc1_Instruction extends Instruction {
   op: OpInstr.coprocessor1_func
@@ -1049,6 +1186,9 @@ export interface Cfc2_Instruction extends Instruction {
   rest: 0
 }
 
+export type Some_Cfc_Instruction =
+  | Cfc1_Instruction
+  | Cfc2_Instruction
 
 export interface Mtc0_Instruction extends Instruction {
   op: OpInstr.coprocessor0_func
@@ -1077,6 +1217,11 @@ export interface Mtc2_Instruction extends Instruction {
   rest: 0
 }
 
+export type Some_Mtc_Instruction =
+  | Mtc0_Instruction
+  | Mtc1_Instruction
+  | Mtc2_Instruction
+
 export interface Ctc1_Instruction extends Instruction {
   op: OpInstr.coprocessor1_func
   coprocessor: 1
@@ -1094,6 +1239,10 @@ export interface Ctc2_Instruction extends Instruction {
   rd: int5
   rest: 0
 }
+
+export type Some_Ctc_Instruction =
+  | Ctc1_Instruction
+  | Ctc2_Instruction
 
 
 /**
@@ -1114,6 +1263,10 @@ export interface Jal_Instruction extends Instruction {
   op: OpInstr.jal
   target: int26
 }
+
+export type Some_J_Type_Instruction =
+  | J_Instruction
+  | Jal_Instruction
 
 
 //TLB instructions
@@ -1145,3 +1298,50 @@ export interface Eret_Instruction extends Tlb_Instruction {
   subOpCode: TlbOpCode.eret
 }
 
+export type Some_Tlb_Instruction =
+  | Tlbr_Instruction
+  | Tlbwi_Instruction
+  | Tlbwr_Instruction
+  | Tlbp_Instruction
+  | Eret_Instruction
+
+
+export type Some_Coprocessor_Instruction =
+  | Some_MfcZ_Instruction
+  | Some_Dmfc_Instruction
+  | Some_Dmtc_Instruction
+  | Some_Cfc_Instruction
+  | Some_Mtc_Instruction
+  | Some_Ctc_Instruction
+  | Some_J_Type_Instruction
+  | Some_Tlb_Instruction
+
+export type Some_Branch_Instruction =
+  | Some_Branch_Coprocessor_Instruction
+  | Some_I_Type_Branch_Instruction
+
+
+export type Some_Special_Instruction = Some_R_Type_Instruction
+
+export type Some_Regimm_Instruction =
+  | Some_I_Type_Regimm_Immediate_Instruction
+  | Some_I_Type_Regimm_Instruction
+
+export type Some_Instruction =
+  | Reserved_Instruction
+  | Some_R_Type_Instruction
+  | Cache_Instruction
+  | Some_I_Type_Regimm_Immediate_Instruction
+  | Some_I_Type_Regimm_Instruction
+  | Some_I_Type_Branch_Instruction
+  | Some_I_Type_Instruction
+  | Some_I_Type_Offset_Instruction
+  | Some_Branch_Coprocessor_Instruction
+  | Some_MfcZ_Instruction
+  | Some_Dmfc_Instruction
+  | Some_Dmtc_Instruction
+  | Some_Cfc_Instruction
+  | Some_Mtc_Instruction
+  | Some_Ctc_Instruction
+  | Some_J_Type_Instruction
+  | Some_Tlb_Instruction
