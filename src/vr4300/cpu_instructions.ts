@@ -37,7 +37,9 @@ import {
   BranchConditionCode,
   Cache_Instruction,
   Cfc1_Instruction,
-  Cfc2_Instruction, Ctc1_Instruction, Ctc2_Instruction,
+  Cfc2_Instruction,
+  Ctc1_Instruction,
+  Ctc2_Instruction,
   Dadd_Instruction,
   Daddi_Instruction,
   Daddiu_Instruction,
@@ -47,7 +49,9 @@ import {
   Div_Instruction,
   Divu_Instruction,
   Dmfc0_Instruction,
-  Dmfc1_Instruction, Dmtc0_Instruction, Dmtc1_Instruction,
+  Dmfc1_Instruction,
+  Dmtc0_Instruction,
+  Dmtc1_Instruction,
   Dmult_Instruction,
   Dmultu_Instruction,
   Dsll32_Instruction,
@@ -60,7 +64,8 @@ import {
   Dsrl_Instruction,
   Dsrlv_Instruction,
   Dsub_Instruction,
-  Dsubu_Instruction, Eret_Instruction,
+  Dsubu_Instruction,
+  Eret_Instruction,
   I_Type_Branch_Instruction,
   I_Type_Instruction,
   I_Type_Offset_Instruction,
@@ -69,7 +74,10 @@ import {
   InstructionOld,
   int26,
   int32,
-  int6, J_Instruction, J_Type_Instruction, Jal_Instruction,
+  int6,
+  J_Instruction,
+  J_Type_Instruction,
+  Jal_Instruction,
   Jalr_Instruction,
   Jr_Instruction,
   Lb_Instruction,
@@ -95,7 +103,8 @@ import {
   Mfc2_Instruction,
   MfcZ_Instruction,
   Mtc0_Instruction,
-  Mtc1_Instruction, Mtc2_Instruction,
+  Mtc1_Instruction,
+  Mtc2_Instruction,
   Mult_Instruction,
   Multu_Instruction,
   Nor_Instruction,
@@ -119,6 +128,16 @@ import {
   Slti_Instruction,
   Sltiu_Instruction,
   Sltu_Instruction,
+  Some_Branch_Coprocessor_Instruction, Some_Cfc_Instruction, Some_Ctc_Instruction,
+  Some_Dmfc_Instruction, Some_Dmtc_Instruction,
+  Some_I_Type_Branch_Instruction,
+  Some_I_Type_Instruction, Some_I_Type_Offset_Instruction,
+  Some_I_Type_Regimm_Immediate_Instruction,
+  Some_I_Type_Regimm_Instruction,
+  Some_Instruction,
+  Some_J_Type_Instruction,
+  Some_MfcZ_Instruction, Some_Mtc_Instruction,
+  Some_R_Type_Instruction, Some_Tlb_Instruction,
   Sra_Instruction,
   Srav_Instruction,
   Srl_Instruction,
@@ -137,7 +156,12 @@ import {
   Tge_Instruction,
   Tgei_Instruction,
   Tgeiu_Instruction,
-  Tgeu_Instruction, Tlb_Instruction, Tlbp_Instruction, Tlbr_Instruction, Tlbwi_Instruction, Tlbwr_Instruction,
+  Tgeu_Instruction,
+  Tlb_Instruction,
+  Tlbp_Instruction,
+  Tlbr_Instruction,
+  Tlbwi_Instruction,
+  Tlbwr_Instruction,
   Tlt_Instruction,
   Tlti_Instruction,
   Tltiu_Instruction,
@@ -1275,7 +1299,7 @@ const xori_instr: InstructionOld = {
 }
 
 
-export function decode_single_binary_instructions(instr_line: int32) {
+export function decode_single_binary_instructions(instr_line: int32): Some_Instruction {
 
   //all instructions are 32 bits long
 
@@ -1403,9 +1427,16 @@ export function decode_single_binary_instructions(instr_line: int32) {
   }
 
 
+  const reserved_instr: Reserved_Instruction = {
+    original: instr_line,
+    op: OpInstr.reserved,
+    debug_view: "reserved instruction",
+  }
+
+  return reserved_instr
 }
 
-function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserved_Instruction {
+function _decode_single_r_type_instr(instr: int32): Some_R_Type_Instruction | Reserved_Instruction {
 
   //R-Type (ADD, ADDU, AND, ...)
 
@@ -2122,7 +2153,7 @@ function _decode_single_r_type_instr(instr: int32): R_Type_Instruction | Reserve
 
 
 //we don't have a reserved instruction catch here, as the calling function knows all op codes for this
-function _decode_single_i_type_instr(instr: int32): I_Type_Instruction | Reserved_Instruction {
+function _decode_single_i_type_instr(instr: int32): Some_I_Type_Instruction | Reserved_Instruction {
 
   //I-Type (ADDI, ADDIU, ANDI, BEQ, BGEZ, BGEZAL, BGEZALL, BGEZL, BGTZ, BLEZ, BLTZ, BLTZAL, BLTZALL, BLTZL, BNE, LB, LBU, LH, LHU, LUI, LW, ORI, SB, SH, SLTI, SLTIU, SW, XORI)
 
@@ -2277,7 +2308,7 @@ function _decode_single_i_type_instr(instr: int32): I_Type_Instruction | Reserve
 }
 
 //we don't have a reserved instruction catch here, as the calling function knows all op codes for this
-function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruction | Cache_Instruction | Reserved_Instruction {
+function _decode_single_i_type_offset_instr(instr: int32): Some_I_Type_Offset_Instruction | Cache_Instruction | Reserved_Instruction {
 
   //I-Type (ADDI, ADDIU, ANDI, BEQ, BGEZ, BGEZAL, BGEZALL, BGEZL, BGTZ, BLEZ, BLTZ, BLTZAL, BLTZALL, BLTZL, BNE, LB, LBU, LH, LHU, LUI, LW, ORI, SB, SH, SLTI, SLTIU, SW, XORI)
 
@@ -2695,7 +2726,7 @@ function _decode_single_i_type_offset_instr(instr: int32): I_Type_Offset_Instruc
 }
 
 //we don't have a reserved instruction catch here, as the calling function knows all op codes for this
-function _decode_single_i_type_branch_instr(instr: int32): I_Type_Branch_Instruction | Reserved_Instruction {
+function _decode_single_i_type_branch_instr(instr: int32): Some_I_Type_Branch_Instruction | Reserved_Instruction {
 
   //I-Type (ADDI, ADDIU, ANDI, BEQ, BGEZ, BGEZAL, BGEZALL, BGEZL, BGTZ, BLEZ, BLTZ, BLTZAL, BLTZALL, BLTZL, BNE, LB, LBU, LH, LHU, LUI, LW, ORI, SB, SH, SLTI, SLTIU, SW, XORI)
 
@@ -2817,7 +2848,7 @@ function _decode_single_i_type_branch_instr(instr: int32): I_Type_Branch_Instruc
 }
 
 
-function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immediate_Instruction | I_Type_Regimm_Offset_Instruction | Reserved_Instruction {
+function _decode_single_i_type_regimm_instr(instr: int32): Some_I_Type_Regimm_Immediate_Instruction | Some_I_Type_Regimm_Instruction | Reserved_Instruction {
 
   //I-Type (ADDI, ADDIU, ANDI, BEQ, BGEZ, BGEZAL, BGEZALL, BGEZL, BGTZ, BLEZ, BLTZ, BLTZAL, BLTZALL, BLTZL, BNE, LB, LBU, LH, LHU, LUI, LW, ORI, SB, SH, SLTI, SLTIU, SW, XORI)
 
@@ -3020,7 +3051,7 @@ function _decode_single_i_type_regimm_instr(instr: int32): I_Type_Regimm_Immedia
 
 }
 
-function _decode_single_j_type_instr(instr: int32): J_Type_Instruction | Reserved_Instruction {
+function _decode_single_j_type_instr(instr: int32): Some_J_Type_Instruction | Reserved_Instruction {
 
   //first 6 bits are opcode (e.g. ADDI)
   const opcode = instr >>> 26;
@@ -3062,13 +3093,13 @@ function _decode_single_j_type_instr(instr: int32): J_Type_Instruction | Reserve
 
 
 function _decode_coprocessor_type_instr(instr: int32):
-  Branch_Coprocessor_Instruction | MfcZ_Instruction
-  | Dmfc0_Instruction | Dmfc1_Instruction
-  | Cfc1_Instruction | Cfc2_Instruction
-  | Mtc0_Instruction | Mtc1_Instruction | Mtc2_Instruction
-  | Ctc1_Instruction | Ctc2_Instruction
-  | Dmtc0_Instruction | Dmtc1_Instruction
-  | Tlb_Instruction
+  Some_Branch_Coprocessor_Instruction | Some_MfcZ_Instruction
+  | Some_Dmfc_Instruction
+  | Some_Cfc_Instruction
+  | Some_Mtc_Instruction
+  | Some_Ctc_Instruction
+  | Some_Dmtc_Instruction
+  | Some_Tlb_Instruction
   | Reserved_Instruction {
 
   //first 6 bits are opcode (e.g. ADDI)

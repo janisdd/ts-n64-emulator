@@ -116,7 +116,9 @@ export class Cpu {
     const entry_pc = elfFile.header.e_entry
     console.log(`entry_pc: ${entry_pc.toString(16)}`)
 
-    for (let i = 0; i < 10; i++) {
+    const totalToExecute = 10
+
+    for (let i = 0; i < totalToExecute; i++) {
       const instr_bytes = this.mem.view.getUint32(i * 4 + entry_pc, elfFile.header._isLittleEndian)
       const instr = decode_single_binary_instructions(instr_bytes)
 
@@ -125,6 +127,14 @@ export class Cpu {
       }
 
       console.log(instr.debug_view)
+      // console.log()
+    }
+
+    for (let i = 0; i < totalToExecute; i++) {
+      const instr_bytes = this.mem.view.getUint32(i * 4 + entry_pc, elfFile.header._isLittleEndian)
+      const instr = decode_single_binary_instructions(instr_bytes)
+
+      this.execute_instruction(instr)
       console.log()
     }
 
@@ -164,79 +174,141 @@ export class Cpu {
         break;
       case OpInstr.addi: {
 
-        let oldVal_rt = this.registers[instr.rt]
-
         const result = this.registers[instr.rs] + instr.immediate << 16
 
         this.__check_integer_overflow(result)
 
-        this.registers[instr.rt] = result
-
-        let undo = () => {
-          this.registers[instr.rt] = oldVal_rt
-        }
-        this.undoStack.push(undo)
-
+        this.__set_reg_value(instr.rt, result)
         break;
       }
-      case OpInstr.addiu:
+      case OpInstr.addiu: {
+
+        const result = this.registers[instr.rs] + instr.immediate << 16
+
+        this.__set_reg_value(instr.rt, result)
         break;
-      case OpInstr.slti:
+      }
+      case OpInstr.slti: {
+
+        let result = this.registers[instr.rs] < (instr.immediate << 16) ? 1 : 0
+
+        this.__set_reg_value(instr.rt, result)
         break;
-      case OpInstr.sltiu:
+      }
+      case OpInstr.sltiu: {
+
+        //make rs, rt unsigned
+        const unsigned_rs = this.registers[instr.rs] >>> 0
+        const unsigned_rt = this.registers[instr.rt] >>> 0
+
+        let result = unsigned_rs < (instr.immediate << 16) ? 1 : 0
+
+        this.__set_reg_value(instr.rt, result)
         break;
-      case OpInstr.andi:
+      }
+      case OpInstr.andi: {
+
+        let result = this.registers[instr.rs] & instr.immediate << 16
+
+        this.__set_reg_value(instr.rt, result)
         break;
-      case OpInstr.ori:
+      }
+      case OpInstr.ori: {
+
+        let result = this.registers[instr.rs] | instr.immediate << 16
+
+        this.__set_reg_value(instr.rt, result)
         break;
-      case OpInstr.xori:
+      }
+      case OpInstr.xori: {
+
+        let result = this.registers[instr.rs] ^ instr.immediate << 16
+
+        this.__set_reg_value(instr.rt, result)
         break;
+      }
       case OpInstr.lui: {
 
-        let oldVal_reg = this.registers[instr.rt]
+        const result = instr.immediate << 16
 
-        this.registers[instr.rt] = instr.immediate << 16
-
-        let undo = () => {
-          this.registers[instr.rt] = oldVal_reg
-        }
-        this.undoStack.push(undo)
-
+        this.__set_reg_value(instr.rt, result)
         break;
       }
       case OpInstr.daddi: {
 
-        let oldVal_rt = this.registers[instr.rt]
-
         const result = this.registers[instr.rs] + instr.immediate << 16
 
         this.__check_integer_overflow(result)
 
-        this.registers[instr.rt] = result
-
-        let undo = () => {
-          this.registers[instr.rt] = oldVal_rt
-        }
-        this.undoStack.push(undo)
-
+        this.__set_reg_value(instr.rt, result)
         break;
       }
-      case OpInstr.daddiu:
+      case OpInstr.daddiu: {
+
+        const result = this.registers[instr.rs] + instr.immediate << 16
+
+        this.__set_reg_value(instr.rt, result)
         break;
-      case OpInstr.ldl:
+      }
+      case OpInstr.ldl: {
+        console.log(`TODO is mem big endian??`)
+
+        const virtualAddressByte = this.registers[instr.base] + instr.offset << 16
+        const byteColumn = virtualAddressByte % 8
+
+        let result = 0
+        for (let i = 0; i < byteColumn; i++) {
+          let byte = this.mem.view.getUint8(byteColumn + i)
+          result = result | byte << (i * (byteColumn - 8))
+        }
+
+        this.__set_reg_value(instr.rt, result)
         break;
-      case OpInstr.ldr:
+      }
+      case OpInstr.ldr: {
+        console.log(`TODO`)
+
+        const virtualAddressByte = this.registers[instr.base] + instr.offset << 16
+        const byteColumn = virtualAddressByte % 8
+        const startVirtualAddressDoubleWordBoundary = virtualAddressByte - byteColumn
+
+        let result = 0
+        for (let i = 0; i < byteColumn; i++) {
+          let byte = this.mem.view.getUint8(startVirtualAddressDoubleWordBoundary + i)
+          result = result | byte << (i * 8)
+        }
+
+        this.__set_reg_value(instr.rt, result)
         break;
-      case OpInstr.lb:
+      }
+      case OpInstr.lb: {
+        console.log(`TODO`)
+
+        const virtualAddressByte = this.registers[instr.base] + instr.offset << 16
+
+        let result = this.mem.view.getInt8(virtualAddressByte)
+
+        this.__set_reg_value(instr.rt, result)
         break;
-      case OpInstr.lh:
+      }
+      case OpInstr.lh: {
+        console.log(`TODO`)
         break;
+      }
       case OpInstr.lwl:
         break;
       case OpInstr.lw:
         break;
-      case OpInstr.lbu:
+      case OpInstr.lbu: {
+        console.log(`TODO`)
+
+        const virtualAddressByte = this.registers[instr.base] + instr.offset << 16
+
+        let result = this.mem.view.getUint8(virtualAddressByte)
+
+        this.__set_reg_value(instr.rt, result)
         break;
+      }
       case OpInstr.lhu:
         break;
       case OpInstr.lwr:
@@ -261,8 +333,16 @@ export class Cpu {
         break;
       case OpInstr.lld:
         break;
-      case OpInstr.ld:
+      case OpInstr.ld: {
+        console.log(`TODO fix`)
+
+        const virtualAddressByte = this.registers[instr.base] + instr.offset << 16
+
+        let result = this.mem.view.getInt32(virtualAddressByte)
+
+        this.__set_reg_value(instr.rt, result)
         break;
+      }
       case OpInstr.sc:
         break;
       case OpInstr.scd:
@@ -467,22 +547,72 @@ export class Cpu {
         this.__set_reg_value(instr.rd, result)
         break;
       }
-      case FuncInstr.sll:
+      case FuncInstr.sll: {
+
+        let result = this.registers[instr.rt] << instr.sa
+
+        this.__set_reg_value(instr.rd, result)
         break;
-      case FuncInstr.sllv:
+      }
+      case FuncInstr.sllv: {
+
+        const lowOrderFiveBits = this.registers[instr.rs] & 0b11111
+
+        let result = this.registers[instr.rt] << lowOrderFiveBits
+
+        this.__set_reg_value(instr.rd, result)
         break;
-      case FuncInstr.slt:
+      }
+      case FuncInstr.slt: {
+
+        let result = this.registers[instr.rs] < this.registers[instr.rt] ? 1 : 0
+
+        this.__set_reg_value(instr.rd, result)
         break;
-      case FuncInstr.sltu:
+      }
+      case FuncInstr.sltu: {
+
+        //make rs, rt unsigned
+        const unsigned_rs = this.registers[instr.rs] >>> 0
+        const unsigned_rt = this.registers[instr.rt] >>> 0
+
+        let result = unsigned_rs < unsigned_rt ? 1 : 0
+
+        this.__set_reg_value(instr.rd, result)
         break;
-      case FuncInstr.sra:
+      }
+      case FuncInstr.sra: {
+
+        let result = this.registers[instr.rt] >> instr.sa
+
+        this.__set_reg_value(instr.rd, result)
         break;
-      case FuncInstr.srav:
+      }
+      case FuncInstr.srav: {
+
+        const lowOrderFiveBits = this.registers[instr.rs] & 0b11111
+
+        let result = this.registers[instr.rt] >> lowOrderFiveBits
+
+        this.__set_reg_value(instr.rd, result)
         break;
-      case FuncInstr.srl:
+      }
+      case FuncInstr.srl: {
+
+        let result = this.registers[instr.rt] >>> instr.sa
+
+        this.__set_reg_value(instr.rd, result)
         break;
-      case FuncInstr.srlv:
+      }
+      case FuncInstr.srlv: {
+
+        const lowOrderFiveBits = this.registers[instr.rs] & 0b11111
+
+        let result = this.registers[instr.rt] >>> lowOrderFiveBits
+
+        this.__set_reg_value(instr.rd, result)
         break;
+      }
       case FuncInstr.sub: {
 
         const result = this.registers[instr.rs] - this.registers[instr.rt]
@@ -492,14 +622,28 @@ export class Cpu {
         this.__set_reg_value(instr.rd, result)
         break;
       }
-      case FuncInstr.subu:
+      case FuncInstr.subu: {
+
+        const result = this.registers[instr.rs] - this.registers[instr.rt]
+
+        this.__set_reg_value(instr.rd, result)
         break;
-      case FuncInstr.sync:
+      }
+      case FuncInstr.sync: {
+
+        //NOP: The SYNC instruction is executed as a NOP on the V R 4300.
         break;
-      case FuncInstr.syscall:
+      }
+      case FuncInstr.syscall: {
+        //TODO syscall
         break;
-      case FuncInstr.teq:
+      }
+      case FuncInstr.teq: {
+        const isEqual = this.registers[instr.rs] === this.registers[instr.rt]
+
+        //TODO
         break;
+      }
       case FuncInstr.tge:
         break;
       case FuncInstr.tgeu:
@@ -510,8 +654,13 @@ export class Cpu {
         break;
       case FuncInstr.tne:
         break;
-      case FuncInstr.xor:
+      case FuncInstr.xor: {
+
+        let result = this.registers[instr.rs] ^ this.registers[instr.rt]
+
+        this.__set_reg_value(instr.rd, result)
         break;
+      }
       default:
         notExhaustiveSwitch(instr)
     }
@@ -561,6 +710,7 @@ export class Cpu {
 
   }
 
+  //TODO maybe ensure 32 bit? |0?
   private __set_reg_value(reg: number, value: int64) {
     let oldVal = this.registers[reg]
 
